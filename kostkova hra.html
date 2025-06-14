@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kostková Hra</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #4CAF50;
+        }
+        .section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        label, input, button, select {
+            margin-bottom: 10px;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .player-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .player-input label {
+            flex: 1;
+            margin-right: 10px;
+            margin-bottom: 0;
+            width: auto;
+        }
+        .player-input input {
+            flex: 2;
+            margin-bottom: 0;
+        }
+        .player-score {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .player-score:last-child {
+            border-bottom: none;
+        }
+        .dice {
+            font-size: 3em;
+            margin-right: 10px;
+        }
+        .roll-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px; /* Added for spacing between buttons */
+        }
+        #currentPlayerDisplay {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        #currentTurnScoreDisplay { /* Style for current turn score */
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+            margin-top: 10px;
+        }
+        .rules-list {
+            list-style-type: decimal;
+            margin-left: 20px;
+        }
+        .rules-list li {
+            margin-bottom: 8px;
+        }
+        #rankings {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        #rankings h2 {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kostková Hra</h1>
+
+        <div class="section">
+            <h2>Nastavení Hry</h2>
+            <label for="numPlayers">Počet hráčů:</label>
+            <select id="numPlayers">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label for="targetScoreInput">Cílové skóre pro vítězství:</label>
+            <input type="number" id="targetScoreInput" value="100" min="1">
+            <button onclick="setupPlayers()">Potvrdit nastavení</button>
+
+            <div id="playerNames" style="margin-top: 20px;">
+                <!-- Zde se dynamicky přidají pole pro jména hráčů -->
+            </div>
+            <button id="startGameButton" onclick="startGame()" style="display: none;">Spustit hru</button>
+        </div>
+
+        <div class="section" id="gameArea" style="display: none;">
+            <h2>Průběh Hry</h2>
+            <div id="currentPlayerDisplay"></div>
+            <div id="currentTurnScoreDisplay">Body v tahu: 0</div> <!-- New element for current turn score -->
+            <div class="roll-area">
+                <div id="diceDisplay" class="dice"></div>
+                <button onclick="rollDice()">Hodit kostkou</button>
+                <!-- Nové tlačítko pro ukončení tahu -->
+                <button onclick="endTurn()" style="background-color: #f0ad4e;">Ukončit tah</button>
+            </div>
+            <h3 style="margin-top: 20px;">Skóre Hráčů:</h3>
+            <div id="scoreBoard">
+                <!-- Zde se bude zobrazovat skóre hráčů -->
+            </div>
+        </div>
+
+        <div class="section" id="rankings" style="display: none;">
+            <!-- Zde se zobrazí konečné pořadí -->
+        </div>
+
+        <div class="section">
+            <h2>Pravidla Hry</h2>
+            <p>Cílem hry je dosáhnout předem domluveného počtu bodů (např. 100) nebo jednoduše mít na konci kola nejvyšší skóre, pokud hrajete na omezený počet kol.</p>
+            <ul class="rules-list">
+                <li>Každý hráč se střídá v házení kostkou.</li>
+                <li>Při každém hodu se k celkovému skóre hráče přičte hodnota hozené kostky.</li>
+                <li>Pokud padne **jednička (1)**, hráč ztrácí všechny body nasbírané v aktuálním tahu (pokud je má) a na řadu jde další hráč. Pokud má hráč 0 bodů, nic se mu nestane, pouze ztrácí tah.</li>
+                <li>Hráč se může kdykoli rozhodnout ukončit svůj tah a ponechat si aktuálně nasbírané body. V takovém případě jdou na řadu další hráči.</li>
+                <li>Hra končí, když jeden z hráčů dosáhne cílového skóre. Všichni ostatní hráči v daném kole ještě dokončí svůj tah. Po dokončení kola se vyhodnotí konečné skóre a určí se pořadí.</li>
+                <li>Vítězem se stává hráč s nejvyšším skóre na konci hry. V případě shody skóre mají hráči stejné pořadí.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let currentPlayerIndex = 0;
+        let targetScore = 100; // Will be set from input
+        let currentTurnScore = 0; // Score accumulated in the current turn
+        let gameFinishing = false; // Flag to indicate if game is in its final round
+        let roundStartingPlayerIndex = 0; // Index of the player who started the round when gameFinishing became true
+
+        function setupPlayers() {
+            const numPlayers = document.getElementById('numPlayers').value;
+            targetScore = parseInt(document.getElementById('targetScoreInput').value);
+
+            const playerNamesDiv = document.getElementById('playerNames');
+            playerNamesDiv.innerHTML = ''; // Clears previous fields
+
+            for (let i = 0; i < numPlayers; i++) {
+                const playerInputDiv = document.createElement('div');
+                playerInputDiv.className = 'player-input';
+                playerInputDiv.innerHTML = `
+                    <label for="player${i + 1}Name">Jméno hráče ${i + 1}:</label>
+                    <input type="text" id="player${i + 1}Name" value="Hráč ${i + 1}">
+                `;
+                playerNamesDiv.appendChild(playerInputDiv);
+            }
+            document.getElementById('startGameButton').style.display = 'block';
+        }
+
+        function startGame() {
+            const numPlayers = document.getElementById('numPlayers').value;
+            players = [];
+            for (let i = 0; i < numPlayers; i++) {
+                const playerName = document.getElementById(`player${i + 1}Name`).value;
+                players.push({ name: playerName, score: 0 });
+            }
+
+            // Reset game state
+            gameFinishing = false;
+            roundStartingPlayerIndex = 0;
+            currentPlayerIndex = 0;
+            currentTurnScore = 0;
+            document.getElementById('rankings').style.display = 'none'; // Hide rankings from previous game
+
+            document.getElementById('gameArea').style.display = 'block';
+            updateScoreBoard();
+            nextPlayerTurn();
+        }
+
+        function rollDice() {
+            if (gameFinishing && currentPlayerIndex === roundStartingPlayerIndex) {
+                 // Prevent rolling if the final round is already completed
+                 displayMessage("Hra skončila! Zobrazují se výsledky.", false, false, true);
+                 return;
+            }
+
+            const diceValue = Math.floor(Math.random() * 6) + 1; // Rolls the dice (1-6)
+            // Use innerHTML for correct display of HTML entity
+            document.getElementById('diceDisplay').innerHTML = getDiceSymbol(diceValue); // Displays the dice symbol
+
+            if (diceValue === 1) {
+                // If a one is rolled, the player loses current turn points
+                currentTurnScore = 0;
+                // Display custom message instead of alert()
+                displayMessage(`${players[currentPlayerIndex].name} hodil 1! Ztrácí body z aktuálního tahu.`, true);
+                endTurn(); // End turn automatically
+            } else {
+                currentTurnScore += diceValue;
+                // Display custom message instead of alert()
+                displayMessage(`${players[currentPlayerIndex].name} hodil ${diceValue}. Aktuální body v tahu: ${currentTurnScore}`, false);
+            }
+            updateCurrentTurnScoreDisplay(); // Update current turn score display after each roll
+        }
+
+        function endTurn() {
+            // Player decided to end turn or rolled a one
+            players[currentPlayerIndex].score += currentTurnScore;
+            currentTurnScore = 0; // Reset points for the next player
+
+            updateScoreBoard();
+
+            // Check if any player reached the target score to initiate final round
+            if (!gameFinishing) {
+                const winnerFound = players.some(player => player.score >= targetScore);
+                if (winnerFound) {
+                    gameFinishing = true;
+                    roundStartingPlayerIndex = (currentPlayerIndex + 1) % players.length; // Next player starts the final round
+                    displayMessage(`Někdo dosáhl ${targetScore} bodů! Hra se blíží ke konci. Všichni hráči dokončí toto kolo.`, false);
+                }
+            }
+
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            nextPlayerTurn();
+        }
+
+        function nextPlayerTurn() {
+            document.getElementById('currentPlayerDisplay').textContent = `Na řadě je: ${players[currentPlayerIndex].name}`;
+            // Use innerHTML for correct display of HTML entity
+            document.getElementById('diceDisplay').innerHTML = '?'; // Reset dice symbol
+            currentTurnScore = 0; // Reset turn score for the new player
+            updateCurrentTurnScoreDisplay(); // Update current turn score display for the new player
+
+            // Check if the final round has completed
+            if (gameFinishing && currentPlayerIndex === roundStartingPlayerIndex) {
+                calculateAndDisplayRankings();
+                document.getElementById('gameArea').style.display = 'none'; // Hide game controls
+                // Display general game over message (not specific win message, as rankings are shown)
+                displayMessage("Hra skončila! Zobrazuje se konečné pořadí.", false, false, true);
+                return; // Stop further turn processing
+            }
+        }
+
+        function updateCurrentTurnScoreDisplay() {
+            document.getElementById('currentTurnScoreDisplay').textContent = `Body v tahu: ${currentTurnScore}`;
+        }
+
+        function updateScoreBoard() {
+            const scoreBoardDiv = document.getElementById('scoreBoard');
+            scoreBoardDiv.innerHTML = '';
+            players.forEach(player => {
+                const playerScoreDiv = document.createElement('div');
+                playerScoreDiv.className = 'player-score';
+                playerScoreDiv.innerHTML = `<span>${player.name}:</span> <span>${player.score} bodů</span>`;
+                scoreBoardDiv.appendChild(playerScoreDiv);
+            });
+        }
+
+        function getDiceSymbol(value) {
+            switch (value) {
+                case 1: return '&#x2680;'; // ⚀
+                case 2: return '&#x2681;'; // ⚁
+                case 3: return '&#x2682;'; // ⚂
+                case 4: return '&#x2683;'; // ⚃
+                case 5: return '&#x2684;'; // ⚄
+                case 6: return '&#x2685;'; // ⚅
+                default: return '?';
+            }
+        }
+
+        function calculateAndDisplayRankings() {
+            const sortedPlayers = [...players].sort((a, b) => b.score - a.score); // Sort by score descending
+            const rankingsDiv = document.getElementById('rankings');
+            rankingsDiv.innerHTML = '<h2>Konečné Pořadí</h2>';
+            rankingsDiv.style.display = 'block';
+
+            let currentRank = 1;
+            let prevScore = -1;
+            let playersAtCurrentRank = 0;
+
+            sortedPlayers.forEach((player, index) => {
+                if (player.score < prevScore) {
+                    currentRank += playersAtCurrentRank;
+                    playersAtCurrentRank = 0;
+                }
+                prevScore = player.score;
+                playersAtCurrentRank++;
+
+                const rankItem = document.createElement('div');
+                rankItem.className = 'player-score'; // Reusing existing style for consistency
+                rankItem.innerHTML = `<span>${currentRank}. ${player.name}:</span> <span>${player.score} bodů</span>`;
+                rankingsDiv.appendChild(rankItem);
+            });
+
+            // Add a button to play again after rankings are shown
+            const playAgainButton = document.createElement('button');
+            playAgainButton.textContent = 'Hrát znovu';
+            playAgainButton.onclick = resetGame;
+            playAgainButton.style.marginTop = '20px';
+            playAgainButton.style.backgroundColor = '#2196F3';
+            rankingsDiv.appendChild(playAgainButton);
+        }
+
+        function resetGame() {
+            players = [];
+            currentPlayerIndex = 0;
+            targetScore = 100; // Reset to default for setup
+            currentTurnScore = 0;
+            gameFinishing = false;
+            roundStartingPlayerIndex = 0;
+
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('startGameButton').style.display = 'none';
+            document.getElementById('playerNames').innerHTML = '';
+            document.getElementById('scoreBoard').innerHTML = '';
+            document.getElementById('diceDisplay').innerHTML = '';
+            document.getElementById('rankings').innerHTML = ''; // Clear rankings
+            document.getElementById('rankings').style.display = 'none'; // Hide rankings
+            document.getElementById('targetScoreInput').value = 100; // Reset target score input
+            updateCurrentTurnScoreDisplay(); // Reset current turn score display
+            setupPlayers(); // Set up players for a new game
+            hideMessage(); // Hide message
+        }
+
+        // Function to display messages (replaces alert)
+        function displayMessage(message, isError = false, isWin = false, showPlayAgain = false) {
+            let messageBox = document.getElementById('messageBox');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'messageBox';
+                messageBox.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    z-index: 1000;
+                    text-align: center;
+                    display: none;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    min-width: 250px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                `;
+                document.body.appendChild(messageBox);
+            }
+            messageBox.innerHTML = `<p>${message}</p>`;
+            if (showPlayAgain) { // Use showPlayAgain for general "game over" or specific "win" scenarios
+                messageBox.innerHTML += `<button onclick="resetGame()" style="margin-top: 15px; background-color: #2196F3;">Hrát znovu</button>`;
+            } else {
+                messageBox.innerHTML += `<button onclick="hideMessage()" style="margin-top: 15px; background-color: #f44336;">OK</button>`;
+            }
+
+            if (isError) {
+                messageBox.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
+            } else if (isWin) { // Specific win message (though rankings are now primary)
+                messageBox.style.backgroundColor = 'rgba(76, 175, 80, 0.9)';
+            }
+            else {
+                 messageBox.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            }
+            messageBox.style.display = 'flex';
+        }
+
+        // Function to hide messages
+        function hideMessage() {
+            const messageBox = document.getElementById('messageBox');
+            if (messageBox) {
+                messageBox.style.display = 'none';
+            }
+        }
+
+        // Initialize player setup on page load
+        setupPlayers();
+    </script>
+</body>
+</html>
