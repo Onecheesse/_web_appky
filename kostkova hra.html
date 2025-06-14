@@ -13,6 +13,7 @@
             padding: 20px;
             background-color: #f4f4f4;
             color: #333;
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for dark mode */
         }
         .container {
             background-color: #fff;
@@ -22,9 +23,11 @@
             width: 90%;
             max-width: 800px;
             margin-bottom: 20px;
+            transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for dark mode */
         }
         h1, h2 {
             color: #4CAF50;
+            transition: color 0.3s; /* Smooth transition for dark mode */
         }
         .section {
             margin-bottom: 25px;
@@ -42,6 +45,7 @@
             padding: 8px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Smooth transition for dark mode */
         }
         button {
             background-color: #4CAF50;
@@ -50,9 +54,14 @@
             cursor: pointer;
             font-size: 16px;
             padding: 10px;
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for dark mode */
         }
         button:hover {
             background-color: #45a049;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         .player-input {
             display: flex;
@@ -74,6 +83,7 @@
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px dashed #eee;
+            transition: border-bottom 0.3s; /* Smooth transition for dark mode */
         }
         .player-score:last-child {
             border-bottom: none;
@@ -81,25 +91,29 @@
         .dice {
             font-size: 3em;
             margin-right: 10px;
+            min-width: 1em; /* Ensure enough space for dice symbol */
+            text-align: center;
         }
         .roll-area {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-top: 20px;
-            gap: 10px; /* Added for spacing between buttons */
+            gap: 10px;
         }
         #currentPlayerDisplay {
             font-size: 1.2em;
             font-weight: bold;
             color: #333;
             margin-bottom: 15px;
+            transition: color 0.3s; /* Smooth transition for dark mode */
         }
-        #currentTurnScoreDisplay { /* Style for current turn score */
+        #currentTurnScoreDisplay {
             font-size: 1.1em;
             font-weight: bold;
             color: #555;
             margin-top: 10px;
+            transition: color 0.3s; /* Smooth transition for dark mode */
         }
         .rules-list {
             list-style-type: decimal;
@@ -112,13 +126,109 @@
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #eee;
+            transition: border-top 0.3s; /* Smooth transition for dark mode */
         }
         #rankings h2 {
             margin-bottom: 15px;
         }
+
+        /* Dark Mode styles */
+        body.dark-mode {
+            background-color: #222;
+            color: #eee;
+        }
+        body.dark-mode .container {
+            background-color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        body.dark-mode h1,
+        body.dark-mode h2 {
+            color: #90EE90; /* Lighter green for dark mode */
+        }
+        body.dark-mode label,
+        body.dark-mode input,
+        body.dark-mode select {
+            background-color: #444;
+            border-color: #555;
+            color: #eee;
+        }
+        body.dark-mode input::placeholder {
+            color: #bbb;
+        }
+        body.dark-mode button {
+            background-color: #555;
+            color: #eee;
+        }
+        body.dark-mode button:hover {
+            background-color: #666;
+        }
+        /* Specific button overrides for dark mode */
+        body.dark-mode button[onclick="endTurn()"] { /* End turn button */
+            background-color: #d8962f !important;
+        }
+        body.dark-mode button[onclick="endTurn()"]:hover {
+            background-color: #e0a43b !important;
+        }
+        body.dark-mode #rankings button { /* Play again button */
+            background-color: #1a7bbd !important;
+        }
+        body.dark-mode #rankings button:hover {
+            background-color: #209ce0 !important;
+        }
+        body.dark-mode #messageBox button[onclick="hideMessage()"] { /* OK button in message box */
+            background-color: #c9372b !important;
+        }
+         body.dark-mode #messageBox button[onclick="hideMessage()"]:hover {
+            background-color: #e04439 !important;
+        }
+        body.dark-mode #messageBox button[onclick="resetGame()"] { /* Play again button in message box */
+            background-color: #1a7bbd !important;
+        }
+        body.dark-mode #messageBox button[onclick="resetGame()"]:hover {
+            background-color: #209ce0 !important;
+        }
+
+        body.dark-mode .player-score {
+            border-bottom: 1px dashed #666;
+        }
+        body.dark-mode #currentTurnScoreDisplay {
+            color: #ccc;
+        }
+        /* Dark mode for message box */
+        body.dark-mode #messageBox {
+            background-color: rgba(50, 50, 50, 0.9);
+            color: #eee;
+        }
+        body.dark-mode #messageBox[style*="background-color: rgba(255, 0, 0"] { /* Error red */
+            background-color: rgba(200, 0, 0, 0.9) !important;
+        }
+        body.dark-mode #messageBox[style*="background-color: rgba(76, 175, 80"] { /* Win green */
+            background-color: rgba(60, 140, 60, 0.9) !important;
+        }
+
+        #darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000; /* Ensure it's above other content */
+        }
     </style>
 </head>
 <body>
+    <button id="darkModeToggle" aria-label="Přepnout tmavý režim">🌙</button>
+
     <div class="container">
         <h1>Kostková Hra</h1>
 
@@ -145,12 +255,11 @@
         <div class="section" id="gameArea" style="display: none;">
             <h2>Průběh Hry</h2>
             <div id="currentPlayerDisplay"></div>
-            <div id="currentTurnScoreDisplay">Body v tahu: 0</div> <!-- New element for current turn score -->
+            <div id="currentTurnScoreDisplay">Body v tahu: 0</div>
             <div class="roll-area">
                 <div id="diceDisplay" class="dice"></div>
-                <button onclick="rollDice()">Hodit kostkou</button>
-                <!-- Nové tlačítko pro ukončení tahu -->
-                <button onclick="endTurn()" style="background-color: #f0ad4e;">Ukončit tah</button>
+                <button id="rollDiceButton" onclick="rollDice()">Hodit kostkou</button>
+                <button id="endTurnButton" onclick="endTurn()" style="background-color: #f0ad4e;">Ukončit tah</button>
             </div>
             <h3 style="margin-top: 20px;">Skóre Hráčů:</h3>
             <div id="scoreBoard">
@@ -179,17 +288,52 @@
     <script>
         let players = [];
         let currentPlayerIndex = 0;
-        let targetScore = 100; // Will be set from input
-        let currentTurnScore = 0; // Score accumulated in the current turn
-        let gameFinishing = false; // Flag to indicate if game is in its final round
-        let roundStartingPlayerIndex = 0; // Index of the player who started the round when gameFinishing became true
+        let targetScore = 100;
+        let currentTurnScore = 0;
+        let gameFinishing = false;
+        let roundStartingPlayerIndex = 0;
 
+        // --- Dark Mode Functions ---
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            // Save preference to localStorage
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                darkModeToggle.textContent = '☀️'; // Sun icon for light mode
+                darkModeToggle.setAttribute('aria-label', 'Přepnout světlý režim');
+            } else {
+                localStorage.setItem('theme', 'light');
+                darkModeToggle.textContent = '🌙'; // Moon icon for dark mode
+                darkModeToggle.setAttribute('aria-label', 'Přepnout tmavý režim');
+            }
+        }
+
+        // Apply theme on load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.textContent = '☀️';
+                darkModeToggle.setAttribute('aria-label', 'Přepnout světlý režim');
+            } else {
+                darkModeToggle.textContent = '🌙';
+                darkModeToggle.setAttribute('aria-label', 'Přepnout tmavý režim');
+            }
+        }
+        // Attach event listener for dark mode toggle
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        // Load theme when the script runs
+        loadTheme();
+
+        // --- Game Logic Functions ---
         function setupPlayers() {
             const numPlayers = document.getElementById('numPlayers').value;
             targetScore = parseInt(document.getElementById('targetScoreInput').value);
 
             const playerNamesDiv = document.getElementById('playerNames');
-            playerNamesDiv.innerHTML = ''; // Clears previous fields
+            playerNamesDiv.innerHTML = '';
 
             for (let i = 0; i < numPlayers; i++) {
                 const playerInputDiv = document.createElement('div');
@@ -216,36 +360,59 @@
             roundStartingPlayerIndex = 0;
             currentPlayerIndex = 0;
             currentTurnScore = 0;
-            document.getElementById('rankings').style.display = 'none'; // Hide rankings from previous game
-
+            document.getElementById('rankings').style.display = 'none';
             document.getElementById('gameArea').style.display = 'block';
             updateScoreBoard();
             nextPlayerTurn();
         }
 
         function rollDice() {
+            const diceDisplay = document.getElementById('diceDisplay');
+            const rollButton = document.getElementById('rollDiceButton');
+            const endTurnButton = document.getElementById('endTurnButton');
+
             if (gameFinishing && currentPlayerIndex === roundStartingPlayerIndex) {
-                 // Prevent rolling if the final round is already completed
                  displayMessage("Hra skončila! Zobrazují se výsledky.", false, false, true);
                  return;
             }
 
-            const diceValue = Math.floor(Math.random() * 6) + 1; // Rolls the dice (1-6)
-            // Use innerHTML for correct display of HTML entity
-            document.getElementById('diceDisplay').innerHTML = getDiceSymbol(diceValue); // Displays the dice symbol
+            // Disable buttons during animation
+            rollButton.disabled = true;
+            endTurnButton.disabled = true;
 
-            if (diceValue === 1) {
-                // If a one is rolled, the player loses current turn points
-                currentTurnScore = 0;
-                // Display custom message instead of alert()
-                displayMessage(`${players[currentPlayerIndex].name} hodil 1! Ztrácí body z aktuálního tahu.`, true);
-                endTurn(); // End turn automatically
-            } else {
-                currentTurnScore += diceValue;
-                // Display custom message instead of alert()
-                displayMessage(`${players[currentPlayerIndex].name} hodil ${diceValue}. Aktuální body v tahu: ${currentTurnScore}`, false);
-            }
-            updateCurrentTurnScoreDisplay(); // Update current turn score display after each roll
+            const finalDiceValue = Math.floor(Math.random() * 6) + 1; // Determine final value immediately
+
+            let animationInterval;
+            let animationCount = 0;
+            const animationDuration = 1000; // 1 second
+            const frameRate = 100; // milliseconds per frame
+
+            // Start animation
+            animationInterval = setInterval(() => {
+                diceDisplay.innerHTML = getDiceSymbol(Math.floor(Math.random() * 6) + 1); // Show random dice
+                animationCount += frameRate;
+                if (animationCount >= animationDuration) {
+                    clearInterval(animationInterval);
+                    animationCount = 0; // Reset for next roll
+                    // Display final dice value
+                    diceDisplay.innerHTML = getDiceSymbol(finalDiceValue);
+
+                    // --- Game logic after animation ---
+                    if (finalDiceValue === 1) {
+                        currentTurnScore = 0;
+                        displayMessage(`${players[currentPlayerIndex].name} hodil 1! Ztrácí body z aktuálního tahu.`, true);
+                        endTurn();
+                    } else {
+                        currentTurnScore += finalDiceValue;
+                        displayMessage(`${players[currentPlayerIndex].name} hodil ${finalDiceValue}. Aktuální body v tahu: ${currentTurnScore}`, false);
+                    }
+                    updateCurrentTurnScoreDisplay();
+
+                    // Re-enable buttons after animation and result display
+                    rollButton.disabled = false;
+                    endTurnButton.disabled = false;
+                }
+            }, frameRate);
         }
 
         function endTurn() {
@@ -260,7 +427,8 @@
                 const winnerFound = players.some(player => player.score >= targetScore);
                 if (winnerFound) {
                     gameFinishing = true;
-                    roundStartingPlayerIndex = (currentPlayerIndex + 1) % players.length; // Next player starts the final round
+                    // The next player in sequence will be the one who starts the final round
+                    roundStartingPlayerIndex = (currentPlayerIndex + 1) % players.length;
                     displayMessage(`Někdo dosáhl ${targetScore} bodů! Hra se blíží ke konci. Všichni hráči dokončí toto kolo.`, false);
                 }
             }
@@ -271,7 +439,6 @@
 
         function nextPlayerTurn() {
             document.getElementById('currentPlayerDisplay').textContent = `Na řadě je: ${players[currentPlayerIndex].name}`;
-            // Use innerHTML for correct display of HTML entity
             document.getElementById('diceDisplay').innerHTML = '?'; // Reset dice symbol
             currentTurnScore = 0; // Reset turn score for the new player
             updateCurrentTurnScoreDisplay(); // Update current turn score display for the new player
@@ -282,7 +449,7 @@
                 document.getElementById('gameArea').style.display = 'none'; // Hide game controls
                 // Display general game over message (not specific win message, as rankings are shown)
                 displayMessage("Hra skončila! Zobrazuje se konečné pořadí.", false, false, true);
-                return; // Stop further turn processing
+                return;
             }
         }
 
@@ -314,7 +481,7 @@
         }
 
         function calculateAndDisplayRankings() {
-            const sortedPlayers = [...players].sort((a, b) => b.score - a.score); // Sort by score descending
+            const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
             const rankingsDiv = document.getElementById('rankings');
             rankingsDiv.innerHTML = '<h2>Konečné Pořadí</h2>';
             rankingsDiv.style.display = 'block';
@@ -332,12 +499,11 @@
                 playersAtCurrentRank++;
 
                 const rankItem = document.createElement('div');
-                rankItem.className = 'player-score'; // Reusing existing style for consistency
+                rankItem.className = 'player-score';
                 rankItem.innerHTML = `<span>${currentRank}. ${player.name}:</span> <span>${player.score} bodů</span>`;
                 rankingsDiv.appendChild(rankItem);
             });
 
-            // Add a button to play again after rankings are shown
             const playAgainButton = document.createElement('button');
             playAgainButton.textContent = 'Hrát znovu';
             playAgainButton.onclick = resetGame;
@@ -349,7 +515,7 @@
         function resetGame() {
             players = [];
             currentPlayerIndex = 0;
-            targetScore = 100; // Reset to default for setup
+            targetScore = 100;
             currentTurnScore = 0;
             gameFinishing = false;
             roundStartingPlayerIndex = 0;
@@ -359,12 +525,12 @@
             document.getElementById('playerNames').innerHTML = '';
             document.getElementById('scoreBoard').innerHTML = '';
             document.getElementById('diceDisplay').innerHTML = '';
-            document.getElementById('rankings').innerHTML = ''; // Clear rankings
-            document.getElementById('rankings').style.display = 'none'; // Hide rankings
-            document.getElementById('targetScoreInput').value = 100; // Reset target score input
-            updateCurrentTurnScoreDisplay(); // Reset current turn score display
-            setupPlayers(); // Set up players for a new game
-            hideMessage(); // Hide message
+            document.getElementById('rankings').innerHTML = '';
+            document.getElementById('rankings').style.display = 'none';
+            document.getElementById('targetScoreInput').value = 100;
+            updateCurrentTurnScoreDisplay();
+            setupPlayers();
+            hideMessage();
         }
 
         // Function to display messages (replaces alert)
@@ -384,7 +550,7 @@
                     border-radius: 10px;
                     z-index: 1000;
                     text-align: center;
-                    display: none;
+                    display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
@@ -394,7 +560,7 @@
                 document.body.appendChild(messageBox);
             }
             messageBox.innerHTML = `<p>${message}</p>`;
-            if (showPlayAgain) { // Use showPlayAgain for general "game over" or specific "win" scenarios
+            if (showPlayAgain) {
                 messageBox.innerHTML += `<button onclick="resetGame()" style="margin-top: 15px; background-color: #2196F3;">Hrát znovu</button>`;
             } else {
                 messageBox.innerHTML += `<button onclick="hideMessage()" style="margin-top: 15px; background-color: #f44336;">OK</button>`;
@@ -402,7 +568,7 @@
 
             if (isError) {
                 messageBox.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
-            } else if (isWin) { // Specific win message (though rankings are now primary)
+            } else if (isWin) {
                 messageBox.style.backgroundColor = 'rgba(76, 175, 80, 0.9)';
             }
             else {
