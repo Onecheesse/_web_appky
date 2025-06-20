@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF--8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Page Rules: Kompletní Česká Pravidla</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Lora:ital@0;1&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid #005f73;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: #005f73;
+            font-family: 'Lora', serif;
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        h2 {
+            color: #0a9396;
+            border-bottom: 1px solid #94d2bd;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-family: 'Lora', serif;
+        }
+
+        h3 {
+            color: #ee9b00;
+            margin-top: 20px;
+        }
+
+        strong {
+            color: #001219;
+        }
+
+        .eng-term {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            color: #555;
+            font-size: 0.95em;
+        }
+        
+        ul {
+            list-style-type: disc;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .action-box {
+            background-color: #e9d8a6;
+            border-left: 5px solid #ee9b00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .rule-highlight {
+            background-color: #e0fbfc;
+            border: 1px solid #94d2bd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+
+        .download-button {
+            display: block;
+            width: 250px;
+            margin: 30px auto;
+            padding: 15px 20px;
+            background-color: #ae2012;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .download-button:hover {
+            background-color: #9b2226;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+                box-shadow: none;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                max-width: 100%;
+                border: none;
+            }
+            .download-button, .footer-note {
+                display: none;
+            }
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>One Page Rules</h1>
+            <p>Kompletní česká pravidla pro rychlé a přístupné stolní bitvy</p>
+        </header>
+        
+        <button class="download-button" onclick="window.print()">Stáhnout jako PDF</button>
+        <p style="text-align:center; font-size: 0.8em; color: #666;">Pro uložení do PDF klikněte na tlačítko a v tiskovém dialogu zvolte cíl "Uložit jako PDF".</p>
+
+        <h2>Sekce 1: Základní principy</h2>
+        <p>
+            Vítejte ve světě One Page Rules (OPR)! Tento systém byl navržen jako reakce na příliš složité a nákladné wargamingové hry. Jeho cílem je poskytnout elegantní, snadno naučitelná a zábavná pravidla, která vám umožní hrát s jakýmikoliv miniaturami, které vlastníte.
+        </p>
+        
+        <h3>Základní Atributy (<span class="eng-term">Core Attributes</span>)</h3>
+        <p>Každá jednotka ve hře je definována dvěma klíčovými statistikami:</p>
+        <ul>
+            <li><strong>Kvalita</strong> (<span class="eng-term">Quality, Q</span>): Reprezentuje výcvik, odhodlání a celkovou zdatnost jednotky. Je to cílové číslo, které musíte hodit na šestistěnné kostce (d6), abyste uspěli při útoku nebo testu morálky. <strong>Nižší číslo znamená lepší jednotku.</strong></li>
+            <li><strong>Obrana</strong> (<span class="eng-term">Defense, D</span>): Reprezentuje zbroj, odolnost a hbitost jednotky. Je to cílové číslo pro záchranný hod proti zranění. <strong>Nižší číslo znamená odolnější jednotku.</strong></li>
+        </ul>
+
+        <h3>Hody Kostkou (<span class="eng-term">Dice Rolls</span>)</h3>
+        <p>
+            Všechny testy ve hře se provádějí hodem šestistěnné kostky (<span class="eng-term">d6</span>). Pokud je výsledek hodu <strong>rovný nebo vyšší</strong> než cílová hodnota (např. Kvalita), akce je úspěšná.
+        </p>
+        <div class="rule-highlight">
+            <strong>Zlatá pravidla hodů:</strong>
+            <ul>
+                <li><strong>Přirozená 6 vždy uspěje:</strong> Hod kostkou s výsledkem 6 je vždy úspěch, bez ohledu na jakékoliv negativní modifikátory.</li>
+                <li><strong>Přirozená 1 vždy selže:</strong> Hod kostkou s výsledkem 1 je vždy neúspěch, bez ohledu na jakékoliv pozitivní modifikátory.</li>
+            </ul>
+        </div>
+        
+        <h2>Sekce 2: Průběh Hry</h2>
+
+        <h3>Struktura Herního Kola (<span class="eng-term">Round Structure</span>)</h3>
+        <p>Standardní hra trvá <strong>4 kola</strong>. Na konci čtvrtého kola se vyhodnotí cíle mise a určí se vítěz. Tento systém zajišťuje rychlý a svižný průběh hry.</p>
+        
+        <h3>Alternující Aktivace (<span class="eng-term">Alternating Activations</span>)</h3>
+        <p>
+            Toto je klíčový mechanismus OPR. Místo toho, aby jeden hráč odehrál celé své kolo se všemi jednotkami, hráči se střídají v aktivaci <strong>jedné jediné jednotky</strong>. Tento systém udržuje oba hráče neustále zapojené do dění a klade důraz na taktické rozhodování.
+        </p>
+        <ol>
+            <li>Na začátku kola si hráč, který je na řadě, vybere jednu svou dosud neaktivovanou jednotku.</li>
+            <li>S touto jednotkou provede jednu akci.</li>
+            <li>Poté je na řadě druhý hráč, který aktivuje jednu ze svých jednotek.</li>
+            <li>Hráči se takto střídají, dokud nejsou aktivovány všechny jednotky na bojišti.</li>
+            <li>Pokud jednomu hráči dojdou jednotky k aktivaci, druhý hráč postupně aktivuje všechny své zbývající jednotky.</li>
+        </ol>
+
+        <h3>Akce Jednotek (<span class="eng-term">Unit Actions</span>)</h3>
+        <p>Během své aktivace musí každá jednotka provést právě jednu ze čtyř základních akcí:</p>
+        <div class="action-box">
+            <ul>
+                <li><strong>Držet pozici</strong> (<span class="eng-term">Hold</span>): Jednotka se nepohybuje. Může střílet se všemi svými zbraněmi bez postihu.</li>
+                <li><strong>Postupovat</strong> (<span class="eng-term">Advance</span>): Jednotka se pohne až o 6". Po pohybu může střílet, ale s postihem <strong>-1 k hodu na zásah</strong>.</li>
+                <li><strong>Spěchat</strong> (<span class="eng-term">Rush</span>): Jednotka se rychle pohne až o 12". Během této akce nemůže střílet.</li>
+                <li><strong>Útok ztečí</strong> (<span class="eng-term">Charge</span>): Jednotka se pohne až o 12" a musí se pokusit dostat do kontaktu s nepřátelskou jednotkou. Následuje boj zblízka.</li>
+            </ul>
+        </div>
+
+        <h3>Pohyb a Koherence (<span class="eng-term">Movement & Cohesion</span>)</h3>
+        <ul>
+            <li><strong>Měření:</strong> Všechny vzdálenosti se měří v palcích (").</li>
+            <li><strong>Koherence:</strong> Všechny modely v jedné jednotce musí zůstat pohromadě. Každý model musí být ve vzdálenosti max. 1" od alespoň jednoho dalšího modelu ze stejné jednotky.</li>
+            <li><strong>Omezení pohybu:</strong> Jednotka nesmí ukončit svůj pohyb ve vzdálenosti 1" nebo méně od jakékoliv jiné jednotky (přátelské i nepřátelské), pokud neprovádí útok ztečí.</li>
+        </ul>
+
+        <h2>Sekce 3: Bojový Systém</h2>
+        
+        <h3>Střelba (<span class="eng-term">Shooting</span>)</h3>
+        <p>Proces rozlišení střelby probíhá v následujících krocích:</p>
+        <ol>
+            <li><strong>Deklarace cíle:</strong> Útočník vybere cíl v dosahu zbraní a s platnou linií pohledu (<span class="eng-term">Line of Sight</span>).</li>
+            <li><strong>Určení počtu útoků:</strong> Sečtěte počet útoků (<span class="eng-term">Attacks, A</span>) ze všech zbraní v útočící jednotce.</li>
+            <li><strong>Hod na zásah (<span class="eng-term">To-Hit Roll</span>):</strong> Pro každý útok hoďte d6. Zásah je úspěšný, pokud je výsledek ≥ Kvalitě útočníka (případně modifikovaný, např. -1 za akci Postupovat).</li>
+            <li><strong>Hod na záchranu (<span class="eng-term">Defense Roll</span>):</strong> Za každý úspěšný zásah provede obránce hod na záchranu. Cílové číslo je (Obrana obránce + AP zbraně). Úspěch znamená, že zranění je odraženo.</li>
+            <li><strong>Aplikace zranění (<span class="eng-term">Apply Wounds</span>):</strong> Každý neúspěšný záchranný hod způsobí jednotce jedno zranění.</li>
+        </ol>
+
+        <h3>Boj zblízka (<span class="eng-term">Melee</span>)</h3>
+        <p>Boj zblízka je zahájen akcí <strong>Útok ztečí</strong> (<span class="eng-term">Charge</span>) a probíhá následovně:</p>
+        <ol>
+            <li><strong>Pohyb ztečí:</strong> Útočník se pohne až o 12" a dostane alespoň jeden model do kontaktu s nepřítelem.</li>
+            <li><strong>Útočník útočí:</strong> Útočící jednotka provede své útoky zblízka (hod na zásah -> hod na záchranu).</li>
+            <li><strong>Obránce útočí zpět:</strong> Všechny přeživší modely obránce, které jsou v dosahu boje (2"), okamžitě provedou své útoky zpět.</li>
+            <li><strong>Určení vítěze:</strong> Porovnejte celkový počet zranění, které každá strana způsobila. Strana s vyšším počtem vyhrává boj.</li>
+            <li><strong>Důsledky boje:</strong>
+                <ul>
+                    <li><strong>Test Morálky (<span class="eng-term">Morale Test</span>):</strong> Jednotka, která prohrála, musí složit test morálky. Hodí d6 a musí hodit výsledek rovný nebo vyšší než její Kvalita. Při neúspěchu je <strong>Otřesena</strong> (<span class="eng-term">Shaken</span>). Pokud byla jednotka již na polovině své síly, je místo toho <strong>Zničena</strong> (<span class="eng-term">Routed</span>).</li>
+                    <li><strong>Ústup a Konsolidace:</strong> Poražená jednotka ustoupí o 1". Vítězná jednotka se může pohnout o 3".</li>
+                    <li><strong>Únava (<span class="eng-term">Fatigued</span>):</strong> Všechny jednotky, které se účastnily boje, jsou unavené. Pokud v tomto kole bojují znovu, zasahují pouze na 6+.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h2>Sekce 4: Pokročilé Mechaniky</h2>
+
+        <h3>Terén a Viditelnost (<span class="eng-term">Terrain & Line of Sight</span>)</h3>
+        <ul>
+            <li><strong>Viditelnost (<span class="eng-term">Line of Sight, LoS</span>):</strong> Standardně se používá pohled "shora dolů" (<span class="eng-term">Top-Down</span>). Pokud lze nakreslit přímku mezi podstavci dvou modelů bez protnutí terénem blokujícím viditelnost, vidí na sebe.</li>
+            <li><strong>Krytí (<span class="eng-term">Cover</span>):</strong> Pokud cíl stojí v terénu poskytujícím krytí, získává <strong>bonus +1 ke svému hodu na záchranu</strong> proti střelbě.</li>
+            <li><strong>Obtížný terén (<span class="eng-term">Difficult Terrain</span>):</strong> Omezuje pohyb jednotek, které jím procházejí, obvykle na max. 6".</li>
+        </ul>
+
+        <h3>Magie a Psychické Síly (<span class="eng-term">Magic & Psychic Powers</span>)</h3>
+        <p>Jednotky s pravidlem <strong>Kouzelník(X)</strong> (<span class="eng-term">Wizard(X)</span>) nebo <strong>Sesilatel(X)</strong> (<span class="eng-term">Caster(X)</span>) mohou sesílat kouzla.</p>
+        <ol>
+            <li>Na začátku svého kola získá každý kouzelník X magických bodů. Tyto body se mohou hromadit.</li>
+            <li>Během své aktivace může kouzelník zaplatit cenu kouzla v bodech.</li>
+            <li>Hráč hodí d6. Pro úspěšné seslání je potřeba hodit <strong>4+</strong> (výsledek lze modifikovat utracením dalších bodů).</li>
+            <li>Pokud je kouzlo úspěšné, aplikuje se jeho efekt.</li>
+        </ol>
+
+        <h2>Sekce 5: Glosář klíčových speciálních pravidel</h2>
+        <p>Toto je seznam nejběžnějších speciálních pravidel, se kterými se setkáte.</p>
+        <ul>
+            <li><strong>Průraznost Zbroje (X)</strong> (<span class="eng-term">Armor Piercing, AP(X)</span>): Přičte X k obrannému hodu cíle, čímž zhoršuje jeho šanci na záchranu.</li>
+            <li><strong>Smrtící (X)</strong> (<span class="eng-term">Deadly(X)</span>): Každé nezachráněné zranění způsobené touto zbraní se násobí X.</li>
+            <li><strong>Dopad (X)</strong> (<span class="eng-term">Impact(X)</span>): Při útoku ztečí způsobí jednotka X automatických zásahů za každý model, který se dostal do kontaktu s nepřítelem.</li>
+            <li><strong>Zuřivost</strong> (<span class="eng-term">Furious</span>): Při útoku ztečí získává jednotka +1 k počtu útoků zblízka.</li>
+            <li><strong>Jed</strong> (<span class="eng-term">Poison</span>): Zásahy touto zbraní zraňují automaticky, obránce hází pouze na záchranu.</li>
+            <li><strong>Regenerace</strong> (<span class="eng-term">Regeneration</span>): Na konci každé své aktivace si jednotka hodí d6 za každé utrpěné zranění. Za každý výsledek 5+ se jedno zranění zahojí.</li>
+            <li><strong>Strach (X)</strong> (<span class="eng-term">Fear(X)</span>): Při určování vítěze boje zblízka přičte tato jednotka X ke svému skóre způsobených zranění.</li>
+            <li><strong>Nenápadnost</strong> (<span class="eng-term">Stealth</span>): Jednotky střílející na tuto jednotku z více než 12" vzdálenosti utrpí postih -1 k hodu na zásah.</li>
+            <li><strong>Odolnost (X)</strong> (<span class="eng-term">Tough(X)</span>): Tento model má X životů a musí nasbírat X zranění, než je odstraněn ze hry.</li>
+        </ul>
+
+        <div class="footer-note">
+            Toto je neoficiální, fanouškovský překlad pravidel One Page Rules, vytvořený pro komunitu a na základě veřejně dostupných informací. Není spojen s tvůrci OPR.
+        </div>
+    </div>
+</body>
+</html>
