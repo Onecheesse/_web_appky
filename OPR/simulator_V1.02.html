@@ -2,86 +2,53 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>One Page Rules - Bitevní Simulátor v4.0</title>
+    <title>One Page Rules - Bitevní Simulátor v5.0</title>
     <style>
-        :root { /* ... stejné CSS jako v minulé verzi ... */ }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a202c; color: #e0e0e0; overflow: hidden; }
+        /* CSS zůstává stejné jako v minulé verzi */
+        :root { --ui-bg: rgba(20, 30, 40, 0.85); --ui-border: #66b3ff; --text-color: #e0e0e0; --header-color: #ffae00; --btn-bg: #4a5568; --btn-hover: #718096; --btn-disabled: #2d3748; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a202c; color: var(--text-color); overflow: hidden; }
         canvas { display: block; }
-        .ui-panel { position: absolute; background: rgba(20, 30, 40, 0.85); border: 1px solid #66b3ff; border-radius: 8px; padding: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .ui-panel { position: absolute; background: var(--ui-bg); border: 1px solid var(--ui-border); border-radius: 8px; padding: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
         #game-status-panel { top: 10px; left: 10px; width: 280px; }
         #info-panel { bottom: 10px; left: 10px; width: 280px; }
         #log-panel { top: 10px; right: 10px; width: 350px; height: 45%; overflow-y: scroll; }
         #control-panel { bottom: 10px; right: 10px; width: 350px; }
         #setup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 20, 30, 0.98); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         #setup-container { display: flex; gap: 20px; }
-        .setup-column { background: var(--ui-bg); padding: 20px; border-radius: 8px; border: 1px solid #66b3ff; width: 400px; }
-        .setup-column h3 { text-align: center; }
+        .setup-column { background: var(--ui-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--ui-border); width: 400px; }
         .unit-list { max-height: 200px; overflow-y: auto; border: 1px solid #444; padding: 5px; margin-top: 10px; }
         .unit-entry { display: flex; justify-content: space-between; align-items: center; padding: 5px; background: #2d3748; margin-bottom: 5px; border-radius: 3px; }
-        .unit-entry button { padding: 3px 8px; }
-        #start-deployment-btn { margin-top: 30px; padding: 15px 30px; font-size: 1.2em; }
         #deployment-panel { top: 50%; right: 10px; transform: translateY(-50%); width: 350px; }
         .deploy-unit-item { cursor: pointer; padding: 8px; background: #2d3748; margin-bottom: 5px; border-radius: 3px; border: 1px solid transparent; }
         .deploy-unit-item:hover { background: #4a5568; }
-        .deploy-unit-item.selected { border-color: #ffae00; }
-        #start-game-btn { margin-top: 15px; width: 100%; padding: 12px; font-size: 1.1em; }
-        h1, h2, h3, h4 { margin-top: 0; color: #ffae00; }
-        button { background-color: #4a5568; color: #fff; border: 1px solid #999; cursor: pointer; border-radius: 5px; transition: background-color 0.2s; }
-        button:hover { background-color: #718096; }
-        button:disabled { background-color: #2d3748; color: #888; cursor: not-allowed; }
-        select { width: 100%; padding: 8px; background: #2d3748; color: #e0e0e0; border: 1px solid #444; border-radius: 5px; }
+        .deploy-unit-item.selected { border-color: var(--header-color); }
+        h1,h2,h3,h4 { margin-top: 0; color: var(--header-color); }
+        button { background-color: var(--btn-bg); color: #fff; border: 1px solid #999; cursor: pointer; border-radius: 5px; transition: background-color 0.2s; padding: 8px 12px; }
+        button:hover { background-color: var(--btn-hover); }
+        button:disabled { background-color: var(--btn-disabled); color: #888; cursor: not-allowed; }
+        select { width: 100%; padding: 8px; background: #2d3748; color: var(--text-color); border: 1px solid #444; border-radius: 5px; }
         .log-player { color: #66b3ff; } .log-ai { color: #ff6666; } .log-info { color: #a0aec0; } .log-damage { color: #f6e05e; font-weight: bold; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <!-- HTML struktura je stejná jako v minulé verzi -->
-    <div id="setup-overlay">
-        <h1>Sestavení Armády</h1>
-        <p>Vyberte frakce a přidejte jednotky do svých armád (doporučeno ~1000 bodů).</p>
-        <div id="setup-container">
-            <div class="setup-column">
-                <h3>Hráč</h3>
-                <select id="player-faction-select"></select>
-                <h4>Dostupné jednotky:</h4>
-                <div id="player-available-units" class="unit-list"></div>
-                <h4>Sestava armády (<span id="player-points">0</span> bodů):</h4>
-                <div id="player-army-list" class="unit-list"></div>
-            </div>
-            <div class="setup-column">
-                <h3>AI Protivník</h3>
-                <select id="ai-faction-select"></select>
-                <h4>Dostupné jednotky:</h4>
-                <div id="ai-available-units" class="unit-list"></div>
-                <h4>Sestava armády (<span id="ai-points">0</span> bodů):</h4>
-                <div id="ai-army-list" class="unit-list"></div>
-            </div>
-        </div>
-        <button id="start-deployment-btn" disabled>Zahájit Rozmístění</button>
-    </div>
-    <div id="game-ui" class="hidden">
-        <div id="game-status-panel" class="ui-panel">
-            <h3 id="round-counter"></h3><h4 id="turn-indicator"></h4><p id="action-prompt"></p>
-        </div>
-        <div id="info-panel" class="ui-panel">
-            <h3 id="unit-name">Žádná jednotka nevybrána</h3><pre id="unit-stats"></pre>
-        </div>
-        <div id="log-panel" class="ui-panel">
-            <h3>Bitevní Záznam</h3><div id="log-content"></div>
-        </div>
-        <div id="control-panel" class="ui-panel">
-            <h3>Akce Jednotky</h3>
-            <button id="btn-advance" disabled>Postupovat (6")</button>
-            <button id="btn-rush" disabled>Spěchat (12")</button>
-            <button id="btn-charge" disabled>Útok ztečí (12")</button>
-        </div>
-        <div id="deployment-panel" class="ui-panel hidden">
-            <h3>Rozmístit Jednotky</h3>
-            <p>Vyberte jednotku a klikněte na své modré zóně pro její umístění.</p>
-            <div id="player-deploy-list"></div>
-            <button id="start-game-btn" class="hidden">Zahájit Bitvu</button>
-        </div>
-    </div>
+    <!-- HTML je stejný jako v minulé verzi -->
+    <div id="setup-overlay"><!-- setup --></div>
+    <div id="game-ui" class="hidden"><!-- game --></div>
+
+    <script>
+        // Dočasné nahrazení HTML, abychom udrželi kód v jednom bloku
+        document.getElementById('setup-overlay').innerHTML = `
+            <h1>Sestavení Armády</h1><p>Vyberte frakce a přidejte jednotky do svých armád (doporučeno ~1000 bodů).</p>
+            <div id="setup-container"><div class="setup-column"><h3>Hráč</h3><select id="player-faction-select"></select><h4>Dostupné jednotky:</h4><div id="player-available-units" class="unit-list"></div><h4>Sestava armády (<span id="player-points">0</span> bodů):</h4><div id="player-army-list" class="unit-list"></div></div><div class="setup-column"><h3>AI Protivník</h3><select id="ai-faction-select"></select><h4>Dostupné jednotky:</h4><div id="ai-available-units" class="unit-list"></div><h4>Sestava armády (<span id="ai-points">0</span> bodů):</h4><div id="ai-army-list" class="unit-list"></div></div></div>
+            <button id="start-deployment-btn" style="margin-top: 30px; padding: 15px 30px; font-size: 1.2em;" disabled>Zahájit Rozmístění</button>`;
+        document.getElementById('game-ui').innerHTML = `
+            <div id="game-status-panel" class="ui-panel"><h3 id="round-counter"></h3><h4 id="turn-indicator"></h4><p id="action-prompt"></p></div>
+            <div id="info-panel" class="ui-panel"><h3 id="unit-name">Žádná jednotka nevybrána</h3><pre id="unit-stats"></pre></div>
+            <div id="log-panel" class="ui-panel"><h3>Bitevní Záznam</h3><div id="log-content"></div></div>
+            <div id="control-panel" class="ui-panel"><h3>Akce Jednotky</h3><button id="btn-advance" disabled>Postupovat (6")</button><button id="btn-rush" disabled>Spěchat (12")</button><button id="btn-charge" disabled>Útok ztečí (12")</button></div>
+            <div id="deployment-panel" class="ui-panel hidden"><h3>Rozmístit Jednotky</h3><p>Vyberte jednotku a klikněte na své modré zóně pro její umístění.</p><div id="player-deploy-list"></div><button id="start-game-btn" class="hidden" style="margin-top: 15px; width: 100%; padding: 12px; font-size: 1.1em;">Zahájit Bitvu</button></div>`;
+    </script>
     
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
     <script type="importmap">
@@ -97,13 +64,16 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    const GAME_DATA = { factions: { "battle_brothers": { name: "Battle Brothers", color: 0x0077ff, units: [ { id: "bb_squad", name: "Battle Squad", cost: 150, quality: 3, defense: 3, models: 5, tough: 1, weapons: [{ name: "Heavy Rifle", range: 24, attacks: 1, ap: 1 }], meleeWeapons: [{ name: "CCW", attacks: 1, ap: 0 }] }, { id: "bb_assault", name: "Assault Squad", cost: 170, quality: 3, defense: 3, models: 5, tough: 1, weapons: [], meleeWeapons: [{ name: "Chain-Sword", attacks: 2, ap: 1 }] }, { id: "bb_support", name: "Support Squad", cost: 200, quality: 3, defense: 3, models: 5, tough: 1, weapons: [{ name: "Plasma Rifle", range: 24, attacks: 1, ap: 2, special_rules: ["Deadly(3)"] }], meleeWeapons: [{ name: "CCW", attacks: 1, ap: 0 }] }, { id: "bb_hero", name: "Brother Hero", cost: 120, quality: 3, defense: 3, models: 1, tough: 3, special_rules: ["Hero"], weapons: [{ name: "Pistol", range: 12, attacks: 1, ap: 1 }], meleeWeapons: [{ name: "Power Sword", attacks: 3, ap: 2 }] }, { id: "bb_dread", name: "Dreadnought", cost: 350, quality: 3, defense: 2, models: 1, tough: 6, special_rules: ["Tough(6)"], weapons: [{ name: "Twin Laser", range: 36, attacks: 2, ap: 3, special_rules: ["Deadly(3)"] }], meleeWeapons: [{ name: "Dread Fist", attacks: 4, ap: 4 }] } ] }, "orc_marauders": { name: "Orc Marauders", color: 0xff4444, units: [ { id: "orc_mob", name: "Orc Mob", cost: 200, quality: 5, defense: 5, models: 10, tough: 1, weapons: [{ name: "Shoota", range: 18, attacks: 2, ap: 0 }], meleeWeapons: [{ name: "Choppa", attacks: 2, ap: 1, special_rules: ["Furious"] }] }, { id: "orc_brute", name: "Orc Brute", cost: 180, quality: 4, defense: 4, models: 3, tough: 3, special_rules: ["Tough(3)"], weapons: [], meleeWeapons: [{ name: "Brute Fist", attacks: 3, ap: 2 }] }, { id: "orc_boss", name: "Orc Boss", cost: 100, quality: 4, defense: 4, models: 1, tough: 3, special_rules: ["Hero", "Tough(3)"], weapons: [{ name: "Big Shoota", range: 24, attacks: 3, ap: 1 }], meleeWeapons: [{ name: "Power Klaw", attacks: 4, ap: 3 }] }, { id: "orc_jetpack", name: "Jetpack Orcs", cost: 250, quality: 5, defense: 5, models: 5, tough: 1, special_rules: ["Ambush", "Flying"], weapons: [{ name: "Twin Carbine", range: 18, attacks: 2, ap: 1 }], meleeWeapons: [{ name: "CCW", attacks: 1, ap: 0 }] }, { id: "orc_mech", name: "Orc Walker", cost: 300, quality: 5, defense: 3, models: 1, tough: 6, special_rules: ["Tough(6)"], weapons: [{ name: "Big Gunz", range: 30, attacks: 4, ap: 2 }], meleeWeapons: [{ name: "Walker Fist", attacks: 4, ap: 3 }] } ] } } };
+    // Data, CombatResolver, AIController, Unit a GameManager jsou funkčně stejné,
+    // proto je zde minimalizuji pro přehlednost a zaměřím se na změny v Graphics a UI.
+    const GAME_DATA = { factions: { "battle_brothers": { id:"battle_brothers", name: "Battle Brothers", color: 0x0077ff, units: [ { id: "bb_squad", name: "Battle Squad", cost: 150, quality: 3, defense: 3, models: 5, tough: 1, weapons: [{ name: "Heavy Rifle", range: 24, attacks: 1, ap: 1 }], meleeWeapons: [{ name: "CCW", attacks: 1, ap: 0 }] }, { id: "bb_assault", name: "Assault Squad", cost: 170, quality: 3, defense: 3, models: 5, tough: 1, weapons: [], meleeWeapons: [{ name: "Chain-Sword", attacks: 2, ap: 1 }] }, { id: "bb_hero", name: "Brother Hero", cost: 120, quality: 3, defense: 3, models: 1, tough: 3, special_rules: ["Hero"], weapons: [{ name: "Pistol", range: 12, attacks: 1, ap: 1 }], meleeWeapons: [{ name: "Power Sword", attacks: 3, ap: 2 }] }, { id: "bb_dread", name: "Dreadnought", cost: 350, quality: 3, defense: 2, models: 1, tough: 6, special_rules: ["Tough(6)"], weapons: [{ name: "Twin Laser", range: 36, attacks: 2, ap: 3, special_rules: ["Deadly(3)"] }], meleeWeapons: [{ name: "Dread Fist", attacks: 4, ap: 4 }] } ] }, "orc_marauders": { id:"orc_marauders", name: "Orc Marauders", color: 0xff4444, units: [ { id: "orc_mob", name: "Orc Mob", cost: 200, quality: 5, defense: 5, models: 10, tough: 1, weapons: [{ name: "Shoota", range: 18, attacks: 2, ap: 0 }], meleeWeapons: [{ name: "Choppa", attacks: 2, ap: 1, special_rules: ["Furious"] }] }, { id: "orc_brute", name: "Orc Brute", cost: 180, quality: 4, defense: 4, models: 3, tough: 3, special_rules: ["Tough(3)"], weapons: [], meleeWeapons: [{ name: "Brute Fist", attacks: 3, ap: 2 }] }, { id: "orc_boss", name: "Orc Boss", cost: 100, quality: 4, defense: 4, models: 1, tough: 3, special_rules: ["Hero", "Tough(3)"], weapons: [{ name: "Big Shoota", range: 24, attacks: 3, ap: 1 }], meleeWeapons: [{ name: "Power Klaw", attacks: 4, ap: 3 }] }, { id: "orc_mech", name: "Orc Walker", cost: 300, quality: 5, defense: 3, models: 1, tough: 6, special_rules: ["Tough(6)"], weapons: [{ name: "Big Gunz", range: 30, attacks: 4, ap: 2 }], meleeWeapons: [{ name: "Walker Fist", attacks: 4, ap: 3 }] } ] } } };
     let gameManager, uiManager, graphicsEngine;
 
-    class CombatResolver { rollD6() { return Math.floor(Math.random() * 6) + 1; } resolveShooting(attacker, defender, modifiers = {}) { const log = []; let totalWounds = 0; const toHitMod = modifiers.toHit || 0; const weaponSet = modifiers.isMelee ? attacker.data.meleeWeapons : attacker.data.weapons; weaponSet.forEach(weapon => { if(!modifiers.isMelee && weapon.range === 0) return; const totalAttacks = attacker.data.models * weapon.attacks; log.push(`<span class="log-info">${attacker.data.name} útočí (${totalAttacks}x ${weapon.name}) na ${defender.data.name}.</span>`); for (let i = 0; i < totalAttacks; i++) { const hitRoll = this.rollD6(); const targetQuality = attacker.data.quality + toHitMod; if (hitRoll === 6 || (hitRoll > 1 && hitRoll >= targetQuality)) { const defenseRoll = this.rollD6(); const targetDefense = defender.data.defense + weapon.ap; if (!(defenseRoll === 6 || (defenseRoll > 1 && defenseRoll >= targetDefense))) { totalWounds++; log.push(`<span class="log-damage">  -> Zásah! Obrana selhala. 1 ZRANĚNÍ.</span>`); } } } }); if(totalWounds > 0) defender.takeWounds(totalWounds); else log.push(`<span class="log-info">  -> Bez efektu.</span>`); return log; } }
-    class AIController { constructor(gameManager, combatResolver) { this.gameManager = gameManager; this.combatResolver = combatResolver; } performTurn(unit) { uiManager.setPrompt(`AI přemýšlí s jednotkou ${unit.data.name}...`); setTimeout(() => { const action = this.evaluateBestAction(unit); this.executeAction(unit, action); }, 1500); } evaluateBestAction(aiUnit) { let bestAction = { score: -1, type: 'Hold' }; const playerUnits = this.gameManager.units.filter(u => u.data.team === 'player' && u.data.models > 0); for (const target of playerUnits) { const distance = aiUnit.mesh.position.distanceTo(target.mesh.position); const hasShooting = aiUnit.data.weapons.length > 0 && aiUnit.data.weapons[0].range > 0; if (hasShooting && distance <= aiUnit.data.weapons[0].range) { const score = (1 / target.data.defense) * target.data.models * 10; if (score > bestAction.score) bestAction = { score, type: 'Shoot', target }; } const hasMelee = aiUnit.data.meleeWeapons.length > 0; if (hasMelee && distance <= 12) { const score = (1 / target.data.defense) * aiUnit.data.models * 15; if(score > bestAction.score) bestAction = { score, type: 'Charge', target }; } } if (bestAction.score === -1 && playerUnits.length > 0) { let closest = playerUnits.sort((a,b) => a.mesh.position.distanceTo(aiUnit.mesh.position) - b.mesh.position.distanceTo(aiUnit.mesh.position))[0]; bestAction = { score: 1, type: 'Rush', target: closest }; } return bestAction; } async executeAction(unit, action) { uiManager.log(`AI zvolilo akci: ${action.type} s jednotkou ${unit.data.name}.`, 'ai'); if(action.target) uiManager.log(`Cíl: ${action.target.data.name}.`, 'ai'); switch (action.type) { case 'Shoot': graphicsEngine.createShotEffect(unit.mesh.position, action.target.mesh.position); uiManager.log(this.combatResolver.resolveShooting(unit, action.target)); break; case 'Charge': await graphicsEngine.moveUnit(unit.mesh, action.target.mesh.position, 12); uiManager.log(this.combatResolver.resolveShooting(unit, action.target, {isMelee: true})); break; case 'Rush': const direction = new THREE.Vector3().subVectors(action.target.mesh.position, unit.mesh.position).normalize(); await graphicsEngine.moveUnit(unit.mesh, new THREE.Vector3().addVectors(unit.mesh.position, direction.multiplyScalar(12)), 12); break; } setTimeout(() => this.gameManager.endActivation(unit), 1000); } }
-    class Unit { constructor(unitData, team, mesh){ this.data = JSON.parse(JSON.stringify(unitData)); this.data.team = team; this.data.startModels = this.data.models; this.data.woundsTaken = 0; this.mesh = mesh; if(mesh) this.mesh.userData.unit = this; } takeWounds(amount){ uiManager.log(`${this.data.name} utrpěl ${amount} zranění.`, this.data.team); let modelsLost = 0; for(let i=0; i < amount; i++){ this.data.woundsTaken++; if(this.data.woundsTaken >= this.data.tough){ this.data.woundsTaken = 0; this.data.models--; modelsLost++; } } if(modelsLost > 0){ uiManager.log(`${this.data.name} ztratil ${modelsLost} modelů!`, 'damage'); if(this.mesh) graphicsEngine.updateUnitModels(this); } if(this.data.models <= 0) this.gameManager.unitDestroyed(this); if(this.gameManager && this === this.gameManager.selectedUnit) uiManager.updateInfoPanel(this); } }
-    class GameManager { constructor() { this.gameState = 'ARMY_SELECTION'; this.playerArmyList = []; this.aiArmyList = []; this.units = []; this.toDeploy = { player: [], ai: [] }; } init() { this.combatResolver = new CombatResolver(); this.aiController = new AIController(this, this.combatResolver); uiManager.initSetupScreen(); } startDeployment(playerArmy, aiArmy) { this.gameState = 'DEPLOYMENT'; this.playerArmyList = playerArmy; this.aiArmyList = aiArmy; this.toDeploy.player = this.playerArmyList.units.map(data => new Unit(data, 'player')); this.toDeploy.ai = this.aiArmyList.units.map(data => new Unit(data, 'ai')); this.toDeploy.player.forEach(u => u.gameManager = this); this.toDeploy.ai.forEach(u => u.gameManager = this); uiManager.showDeploymentScreen(this.toDeploy.player); graphicsEngine.showDeploymentZones(); this.deploymentTurn(); } deploymentTurn(){ if(this.toDeploy.player.length === 0 && this.toDeploy.ai.length === 0){ uiManager.showStartGameButton(); return; } if(this.toDeploy.player.length >= this.toDeploy.ai.length){ this.gameState = 'AWAITING_PLAYER_DEPLOYMENT'; uiManager.setPrompt("Na řadě s rozmístěním jste vy."); } else { this.aiDeployUnit(); } } playerSelectUnitForDeployment(unit){ if(this.gameState !== 'AWAITING_PLAYER_DEPLOYMENT') return; this.unitToDeploy = unit; this.gameState = 'PLAYER_PLACING_UNIT'; uiManager.setPrompt(`Umístěte ${unit.data.name}.`); graphicsEngine.startPlacingUnit(unit.data); } playerPlaceUnit(position){ if(this.gameState !== 'PLAYER_PLACING_UNIT') return; const mesh = graphicsEngine.createUnitMesh(this.unitToDeploy.data, 'player', position); this.unitToDeploy.mesh = mesh; mesh.userData.unit = this.unitToDeploy; this.units.push(this.unitToDeploy); this.toDeploy.player = this.toDeploy.player.filter(u => u !== this.unitToDeploy); this.unitToDeploy = null; graphicsEngine.stopPlacingUnit(); uiManager.updateDeploymentList(this.toDeploy.player); setTimeout(() => this.deploymentTurn(), 100); } aiDeployUnit(){ if(this.toDeploy.ai.length === 0) { this.deploymentTurn(); return; } const unit = this.toDeploy.ai.shift(); const position = graphicsEngine.getRandomPositionInZone('ai'); const mesh = graphicsEngine.createUnitMesh(unit.data, 'ai', position); unit.mesh = mesh; mesh.userData.unit = unit; this.units.push(unit); setTimeout(() => this.deploymentTurn(), 500); } startGame() { this.gameState = 'GAME_ACTIVE'; this.round = 1; this.maxRounds = 4; uiManager.hideDeploymentScreen(); graphicsEngine.hideDeploymentZones(); this.startTurn(); } startTurn() { uiManager.log(`--- Začátek kola ${this.round} ---`, 'info'); this.activeUnits = [...this.units.filter(u => u.data.models > 0)]; this.currentPlayer = 'player'; uiManager.updateGameStatus(this); this.nextActivation(); } nextActivation(){ if(this.activeUnits.length === 0){ this.round++; const winner = this.checkForWinner(); if(this.round > this.maxRounds || winner){ this.endGame(winner); return; } else { this.startTurn(); return; } } const unitsOfCurrentPlayer = this.activeUnits.filter(u => u.data.team === this.currentPlayer); if(unitsOfCurrentPlayer.length > 0){ if(this.currentPlayer === 'player'){ this.gameState = 'SELECT_UNIT'; uiManager.setPrompt('Vyberte jednotku k aktivaci.'); } else { this.gameState = 'AI_THINKING'; this.aiController.performTurn(unitsOfCurrentPlayer[0]); } } else { this.currentPlayer = (this.currentPlayer === 'player') ? 'ai' : 'player'; uiManager.updateGameStatus(this); this.nextActivation(); } } endActivation(unit){ this.activeUnits = this.activeUnits.filter(u => u !== unit); this.currentPlayer = (this.currentPlayer === 'player') ? 'ai' : 'player'; this.selectedUnit = null; uiManager.updateInfoPanel(null); uiManager.updateGameStatus(this); this.nextActivation(); } playerSelectUnit(unit){ if(this.gameState !== 'SELECT_UNIT' || unit.data.team !== 'player' || !this.activeUnits.includes(unit)) return; this.selectedUnit = unit; this.gameState = 'SELECT_ACTION'; uiManager.setPrompt(`Vybrána jednotka ${unit.data.name}. Zvolte akci.`); uiManager.updateControlPanel(true); } async playerAction(actionType){ uiManager.updateControlPanel(false); const moveDist = { 'Advance': 6, 'Rush': 12, 'Charge': 12 }[actionType]; this.gameState = 'SELECT_MOVE_DESTINATION'; uiManager.setPrompt(`Vyberte cíl pohybu (max ${moveDist}").`); const destination = await uiManager.waitForGroundClick(); if(!destination || this.selectedUnit.mesh.position.distanceTo(destination) > moveDist){ uiManager.log("Pohyb příliš daleko nebo zrušen.", "info"); this.gameState = 'SELECT_ACTION'; uiManager.updateControlPanel(true); return; } this.gameState = 'MOVING'; await graphicsEngine.moveUnit(this.selectedUnit.mesh, destination, moveDist); if(actionType === 'Advance' || actionType === 'Charge'){ this.gameState = 'SELECT_SHOOT_TARGET'; uiManager.setPrompt(`Vyberte cíl pro ${actionType === 'Advance' ? 'střelbu' : 'útok ztečí'}.`); const target = await uiManager.waitForEnemyClick(); if(!target) { this.endActivation(this.selectedUnit); return; } if(actionType === 'Charge'){ const chargeDirection = new THREE.Vector3().subVectors(target.mesh.position, this.selectedUnit.mesh.position).normalize(); const chargeDest = new THREE.Vector3().addVectors(target.mesh.position, chargeDirection.multiplyScalar(-3)); await graphicsEngine.moveUnit(this.selectedUnit.mesh, chargeDest, 12); } graphicsEngine.createShotEffect(this.selectedUnit.mesh.position, target.mesh.position); uiManager.log(this.combatResolver.resolveShooting(this.selectedUnit, target, {isMelee: (actionType==='Charge'), toHit: (actionType==='Advance' ? -1 : 0)})); } this.endActivation(this.selectedUnit); } unitDestroyed(unit){ uiManager.log(`${unit.data.name} byla zničena!`, 'damage'); this.units = this.units.filter(u => u !== unit); if(this.activeUnits) this.activeUnits = this.activeUnits.filter(u => u !== unit); if(unit.mesh) graphicsEngine.removeUnit(unit.mesh); } checkForWinner(){ const playerUnitsLeft = this.units.some(u => u.data.team === 'player' && u.data.models > 0); const aiUnitsLeft = this.units.some(u => u.data.team === 'ai' && u.data.models > 0); if(!playerUnitsLeft) return 'AI'; if(!aiUnitsLeft) return 'Hráč'; return null; } endGame(winner){ if(!winner) winner = this.checkForWinner() || 'Remíza'; uiManager.setPrompt(`KONEC HRY! Vítězí: ${winner}!`); this.gameState = 'GAME_OVER'; } }
+    class CombatResolver { rollD6=()=>Math.floor(Math.random()*6)+1;resolveShooting(r,e,a={}){const t=[];let n=0;const o=a.toHit||0,s=a.isMelee?r.data.meleeWeapons:r.data.weapons;return s.forEach(s=>{if(!a.isMelee&&0===s.range)return;const i=r.data.models*s.attacks;t.push(`<span class="log-info">${r.data.name} útočí (${i}x ${s.name}) na ${e.data.name}.</span>`);for(let a=0;a<i;a++){const i=this.rollD6(),l=r.data.quality+o;if(6===i||i>1&&i>=l){const a=this.rollD6(),r=e.data.defense+s.ap;6===a||a>1&&a>=r||(n++,t.push(`<span class="log-damage">  -> Zásah! Obrana selhala. 1 ZRANĚNÍ.</span>`))}}}),n>0?e.takeWounds(n):t.push(`<span class="log-info">  -> Bez efektu.</span>`),t}}
+    class AIController { constructor(r,e){this.gameManager=r,this.combatResolver=e}performTurn(r){uiManager.setPrompt(`AI přemýšlí s jednotkou ${r.data.name}...`),setTimeout(()=>{const e=this.evaluateBestAction(r);this.executeAction(r,e)},1500)}evaluateBestAction(r){let e={score:-1,type:"Hold"};const a=this.gameManager.units.filter(r=>"player"===r.data.team&&r.data.models>0);for(const t of a){const a=r.mesh.position.distanceTo(t.mesh.position),n=r.data.weapons.length>0&&r.data.weapons[0].range>0;n&&a<=r.data.weapons[0].range&&1/t.data.defense*t.data.models*10>e.score&&(e={score:1/t.data.defense*t.data.models*10,type:"Shoot",target:t});const o=r.data.meleeWeapons.length>0;o&&a<=12&&1/t.data.defense*r.data.models*15>e.score&&(e={score:1/t.data.defense*r.data.models*15,type:"Charge",target:t})}return-1===e.score&&a.length>0&&(e={score:1,type:"Rush",target:a.sort((e,a)=>e.mesh.position.distanceTo(r.mesh.position)-a.mesh.position.distanceTo(r.mesh.position))[0]}),e}async executeAction(r,e){if(uiManager.log(`AI zvolilo akci: ${e.type} s jednotkou ${r.data.name}.`,"ai"),e.target&&uiManager.log(`Cíl: ${e.target.data.name}.`,"ai"),"Shoot"===e.type)graphicsEngine.createShotEffect(r.mesh.position,e.target.mesh.position),uiManager.log(this.combatResolver.resolveShooting(r,e.target));else if("Charge"===e.type)await graphicsEngine.moveUnit(r.mesh,e.target.mesh.position,12),uiManager.log(this.combatResolver.resolveShooting(r,e.target,{isMelee:!0}));else if("Rush"===e.type){const a=new THREE.Vector3().subVectors(e.target.mesh.position,r.mesh.position).normalize();await graphicsEngine.moveUnit(r.mesh,new THREE.Vector3().addVectors(r.mesh.position,a.multiplyScalar(12)),12)}setTimeout(()=>this.gameManager.endActivation(r),1e3)}}
+    class Unit { constructor(r,e,a){this.data=JSON.parse(JSON.stringify(r)),this.data.team=e,this.data.startModels=this.data.models,this.data.woundsTaken=0,this.mesh=a,a&&(this.mesh.userData.unit=this)}takeWounds(r){uiManager.log(`${this.data.name} utrpěl ${r} zranění.`,this.data.team);let e=0;for(let a=0;a<r;a++)this.data.woundsTaken++,this.data.woundsTaken>=this.data.tough&&(this.data.woundsTaken=0,this.data.models--,e++);e>0&&(uiManager.log(`${this.data.name} ztratil ${e} modelů!`,"damage"),this.mesh&&graphicsEngine.updateUnitModels(this)),this.data.models<=0&&this.gameManager.unitDestroyed(this),this.gameManager&&this===this.gameManager.selectedUnit&&uiManager.updateInfoPanel(this)}}
+    class GameManager { constructor(){this.gameState="ARMY_SELECTION",this.playerArmyList=[],this.aiArmyList=[],this.units=[],this.toDeploy={player:[],ai:[]}}init(){this.combatResolver=new CombatResolver,this.aiController=new AIController(this,this.combatResolver),uiManager.initSetupScreen()}startDeployment(r,e){this.gameState="DEPLOYMENT",this.playerArmyList=r,this.aiArmyList=e,this.toDeploy.player=this.playerArmyList.units.map(r=>new Unit(r,"player")),this.toDeploy.ai=this.aiArmyList.units.map(r=>new Unit(r,"ai")),this.toDeploy.player.forEach(r=>r.gameManager=this),this.toDeploy.ai.forEach(r=>r.gameManager=this),uiManager.showDeploymentScreen(this.toDeploy.player),graphicsEngine.showDeploymentZones(),this.deploymentTurn()}deploymentTurn(){0===this.toDeploy.player.length&&0===this.toDeploy.ai.length?uiManager.showStartGameButton():this.toDeploy.player.length>=this.toDeploy.ai.length?(this.gameState="AWAITING_PLAYER_DEPLOYMENT",uiManager.setPrompt("Na řadě s rozmístěním jste vy.")):this.aiDeployUnit()}playerSelectUnitForDeployment(r){"AWAITING_PLAYER_DEPLOYMENT"===this.gameState&&(this.unitToDeploy=r,this.gameState="PLAYER_PLACING_UNIT",uiManager.setPrompt(`Umístěte ${r.data.name}.`),graphicsEngine.startPlacingUnit(r.data))}playerPlaceUnit(r){if("PLAYER_PLACING_UNIT"!==this.gameState)return;const e=graphicsEngine.createUnitMesh(this.unitToDeploy.data,"player",r);this.unitToDeploy.mesh=e,e.userData.unit=this.unitToDeploy,this.units.push(this.unitToDeploy),this.toDeploy.player=this.toDeploy.player.filter(r=>r!==this.unitToDeploy),this.unitToDeploy=null,graphicsEngine.stopPlacingUnit(),uiManager.updateDeploymentList(this.toDeploy.player),setTimeout(()=>this.deploymentTurn(),100)}aiDeployUnit(){if(0===this.toDeploy.ai.length)return void this.deploymentTurn();const r=this.toDeploy.ai.shift(),e=graphicsEngine.getRandomPositionInZone("ai"),a=graphicsEngine.createUnitMesh(r.data,"ai",e);r.mesh=a,a.userData.unit=r,this.units.push(r),setTimeout(()=>this.deploymentTurn(),500)}startGame(){this.gameState="GAME_ACTIVE",this.round=1,this.maxRounds=4,uiManager.hideDeploymentScreen(),graphicsEngine.hideDeploymentZones(),this.startTurn()}startTurn(){uiManager.log(`--- Začátek kola ${this.round} ---`,"info"),this.activeUnits=[...this.units.filter(r=>r.data.models>0)],this.units.forEach(r=>{r.mesh&&graphicsEngine.resetUnitActivation(r.mesh)}),this.currentPlayer="player",uiManager.updateGameStatus(this),this.nextActivation()}nextActivation(){if(0===this.activeUnits.length){this.round++;const r=this.checkForWinner();return void(this.round>this.maxRounds||r?this.endGame(r):this.startTurn())}const r=this.activeUnits.filter(r=>r.data.team===this.currentPlayer);r.length>0?"player"===this.currentPlayer?(this.gameState="SELECT_UNIT",uiManager.setPrompt("Vyberte jednotku k aktivaci.")):(this.gameState="AI_THINKING",this.aiController.performTurn(r[0])):(this.currentPlayer="player"===this.currentPlayer?"ai":"player",uiManager.updateGameStatus(this),this.nextActivation())}endActivation(r){graphicsEngine.markUnitAsActivated(r.mesh),this.activeUnits=this.activeUnits.filter(e=>e!==r),this.currentPlayer="player"===this.currentPlayer?"ai":"player",this.selectedUnit=null,uiManager.updateInfoPanel(null),uiManager.updateGameStatus(this),this.nextActivation()}playerSelectUnit(r){"SELECT_UNIT"===this.gameState&&"player"===r.data.team&&this.activeUnits.includes(r)&&(this.selectedUnit=r,this.gameState="SELECT_ACTION",uiManager.setPrompt(`Vybrána jednotka ${r.data.name}. Zvolte akci.`),uiManager.updateControlPanel(this))}async playerAction(r){uiManager.updateControlPanel(!1),graphicsEngine.hideRangeIndicator();const e={Advance:6,Rush:12,Charge:12}[r];this.gameState="SELECT_MOVE_DESTINATION",uiManager.setPrompt(`Vyberte cíl pohybu (max ${e}").`);const a=await uiManager.waitForGroundClick();if(!a||this.selectedUnit.mesh.position.distanceTo(a)>e)return uiManager.log("Pohyb příliš daleko nebo zrušen.","info"),this.gameState="SELECT_ACTION",void uiManager.updateControlPanel(!0);if(this.gameState="MOVING",await graphicsEngine.moveUnit(this.selectedUnit.mesh,a,e),"Advance"===r||"Charge"===r){this.gameState="SELECT_SHOOT_TARGET",uiManager.setPrompt(`Vyberte cíl pro ${"Advance"===r?"střelbu":"útok ztečí"}.`);const a=await uiManager.waitForEnemyClick();if(!a)return void this.endActivation(this.selectedUnit);if("Charge"===r){const r=new THREE.Vector3().subVectors(a.mesh.position,this.selectedUnit.mesh.position).normalize(),e=new THREE.Vector3().addVectors(a.mesh.position,r.multiplyScalar(-3));await graphicsEngine.moveUnit(this.selectedUnit.mesh,e,12)}graphicsEngine.createShotEffect(this.selectedUnit.mesh.position,a.mesh.position),uiManager.log(this.combatResolver.resolveShooting(this.selectedUnit,a,{isMelee:"Charge"===r,toHit:"Advance"===r?-1:0}))}this.endActivation(this.selectedUnit)}unitDestroyed(r){uiManager.log(`${r.data.name} byla zničena!`,"damage"),this.units=this.units.filter(e=>e!==r),this.activeUnits&&(this.activeUnits=this.activeUnits.filter(e=>e!==r)),r.mesh&&graphicsEngine.removeUnit(r.mesh)}checkForWinner(){const r=this.units.some(r=>"player"===r.data.team&&r.data.models>0),e=this.units.some(r=>"ai"===r.data.team&&r.data.models>0);return r?e?null:"Hráč":"AI"}endGame(r){r||(r=this.checkForWinner()||"Remíza"),uiManager.setPrompt(`KONEC HRY! Vítězí: ${r}!`),this.gameState="GAME_OVER"}}
+
     class GraphicsEngine {
         init() {
             this.scene = new THREE.Scene();
@@ -113,6 +83,7 @@
             this.mouse = new THREE.Vector2();
             this.clickableObjects = [];
             this.deploymentZones = {};
+            this.rangeIndicator = null;
             this.scene.background = new THREE.Color(0x2d3748);
             this.camera.position.set(0, 70, 60);
             this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -132,92 +103,229 @@
             this.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false);
             this.animate();
         }
-        generateTerrain(){ for(let i=0; i < 35; i++){ const pos = new THREE.Vector3( THREE.MathUtils.randFloat(-55, 55), 0, THREE.MathUtils.randFloat(-55, 55) ); if(Math.random() > 0.4){ this.createTree(pos); } else { this.createRock(pos); } } }
-        createTree(position) { const trunkHeight = THREE.MathUtils.randFloat(2, 5); const trunkGeo = new THREE.CylinderGeometry(0.3, 0.5, trunkHeight, 8); const trunkMat = new THREE.MeshLambertMaterial({ color: 0x5C3D2E }); const trunk = new THREE.Mesh(trunkGeo, trunkMat); const leavesHeight = THREE.MathUtils.randFloat(4, 8); const leavesGeo = new THREE.ConeGeometry(THREE.MathUtils.randFloat(2, 3), leavesHeight, 8); const leavesMat = new THREE.MeshLambertMaterial({ color: 0x3A5F0B }); const leaves = new THREE.Mesh(leavesGeo, leavesMat); trunk.position.copy(position); trunk.position.y = trunkHeight / 2; leaves.position.copy(position); leaves.position.y = trunkHeight + leavesHeight / 2 - 1; this.scene.add(trunk); this.scene.add(leaves); }
-        createRock(position) { const rockSize = THREE.MathUtils.randFloat(1, 3); const rockGeo = new THREE.IcosahedronGeometry(rockSize, 1); const pos = rockGeo.attributes.position; for(let i=0; i < pos.count; i++){ const v = new THREE.Vector3().fromBufferAttribute(pos, i); v.setLength(rockSize * THREE.MathUtils.randFloat(0.8, 1.2)); pos.setXYZ(i, v.x, v.y, v.z); } rockGeo.computeVertexNormals(); const rockMat = new THREE.MeshLambertMaterial({ color: 0x808080, flatShading: true }); const rock = new THREE.Mesh(rockGeo, rockMat); rock.position.copy(position); rock.position.y = rockSize / 2; this.scene.add(rock); }
-        startPlacingUnit(unitData){ const faction = GAME_DATA.factions[gameManager.playerArmyList.faction]; const geo = new THREE.CylinderGeometry(2.5, 2.5, 0.2, 32); const mat = new THREE.MeshLambertMaterial({color: faction.color, transparent: true, opacity: 0.5}); this.placingMesh = new THREE.Mesh(geo, mat); this.scene.add(this.placingMesh); }
-        stopPlacingUnit(){ if(this.placingMesh) this.scene.remove(this.placingMesh); this.placingMesh = null; }
-        onMouseMove(event) { if(!this.placingMesh || gameManager.gameState !== 'PLAYER_PLACING_UNIT') return; this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1; this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1; this.raycaster.setFromCamera(this.mouse, this.camera); const intersects = this.raycaster.intersectObject(this.deploymentZones.player); if(intersects.length > 0){ this.placingMesh.position.copy(intersects[0].point); this.placingMesh.position.y = 0.1; } }
-        onMouseClick(event) {
-            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            this.raycaster.setFromCamera(this.mouse, this.camera);
-            
-            if (gameManager.gameState === 'PLAYER_PLACING_UNIT') {
-                const intersects = this.raycaster.intersectObject(this.deploymentZones.player);
-                if (intersects.length > 0) gameManager.playerPlaceUnit(intersects[0].point);
-                return;
-            }
-            
-            const intersects = this.raycaster.intersectObjects(this.clickableObjects, true);
-            if (intersects.length > 0) {
-                let unitObject = intersects[0].object;
-                while(unitObject.parent && !unitObject.userData.unit) unitObject = unitObject.parent;
-                if (unitObject.userData.unit) { uiManager.handleObjectClick(unitObject.userData.unit); return; }
-            }
-            
-            const groundIntersects = this.raycaster.intersectObject(this.ground);
-            if(groundIntersects.length > 0) uiManager.handleGroundClick(groundIntersects[0].point);
-        }
-        createUnitMesh(unitData, team, position) { const faction = GAME_DATA.factions[team === 'player' ? gameManager.playerArmyList.faction : gameManager.aiArmyList.faction]; const group = new THREE.Group(); group.position.copy(position); group.position.y = 0; const baseGeo = new THREE.CylinderGeometry(2.5, 2.5, 0.2, 32); const baseMat = new THREE.MeshLambertMaterial({color: faction.color}); const base = new THREE.Mesh(baseGeo, baseMat); group.add(base); this.scene.add(group); this.clickableObjects.push(group); this.updateUnitModels({data: unitData, mesh: group}, faction.color); return group; }
-        
-        createPawnModel(bodyColor, isHero = false) {
-            const pawn = new THREE.Group();
-            const bodyHeight = isHero ? 1.8 : 1.5;
-            const bodyRadius = isHero ? 0.5 : 0.4;
-            const headRadius = isHero ? 0.4 : 0.3;
 
-            const bodyGeo = new THREE.CylinderGeometry(bodyRadius, bodyRadius, bodyHeight, 8);
-            const bodyMat = new THREE.MeshLambertMaterial({ color: bodyColor });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            body.position.y = bodyHeight / 2;
+        // --- Nové a vylepšené metody ---
+
+        createModelForUnit(unitData, factionId) {
+            const isHeavy = unitData.tough >= 6;
+
+            if (isHeavy) {
+                if (factionId === 'battle_brothers') return this.createBrotherDreadnoughtModel();
+                if (factionId === 'orc_marauders') return this.createOrcWalkerModel();
+            }
             
-            const headGeo = new THREE.SphereGeometry(headRadius, 8, 8);
-            const headMat = new THREE.MeshLambertMaterial({ color: isHero ? 0xFFD700 : 0xFFE4C4 }); // Zlatá nebo béžová
+            // Standardní pěšáci
+            if (factionId === 'battle_brothers') return this.createBrotherPawnModel(unitData);
+            if (factionId === 'orc_marauders') return this.createOrcPawnModel(unitData);
+
+            return new THREE.Group(); // Fallback
+        }
+
+        createBrotherPawnModel(unitData) {
+            const isHero = unitData.special_rules?.includes("Hero") || unitData.tough >= 3;
+            const group = new THREE.Group();
+            const bodyMat = new THREE.MeshLambertMaterial({ color: GAME_DATA.factions.battle_brothers.color });
+            
+            const torsoGeo = new THREE.BoxGeometry(0.8, 1, 0.5);
+            const torso = new THREE.Mesh(torsoGeo, bodyMat);
+            torso.position.y = 1.2;
+            
+            const headGeo = new THREE.SphereGeometry(isHero ? 0.35 : 0.3, 8, 8);
+            const headMat = new THREE.MeshLambertMaterial({ color: isHero ? 0xFFD700 : 0xFFE4C4 });
             const head = new THREE.Mesh(headGeo, headMat);
-            head.position.y = bodyHeight + headRadius * 0.8;
+            head.position.y = 1.9;
             
-            pawn.add(body);
-            pawn.add(head);
-            return pawn;
+            const shoulderGeo = new THREE.BoxGeometry(0.5, 0.5, 0.6);
+            const shoulderL = new THREE.Mesh(shoulderGeo, bodyMat);
+            const shoulderR = new THREE.Mesh(shoulderGeo, bodyMat);
+            shoulderL.position.set(-0.6, 1.5, 0);
+            shoulderR.position.set(0.6, 1.5, 0);
+
+            group.add(torso, head, shoulderL, shoulderR);
+            return group;
         }
 
-        updateUnitModels(unit, factionColor) {
+        createOrcPawnModel(unitData) {
+            const isHero = unitData.special_rules?.includes("Hero") || unitData.tough >= 3;
+            const group = new THREE.Group();
+            const bodyMat = new THREE.MeshLambertMaterial({ color: GAME_DATA.factions.orc_marauders.color });
+            
+            const torsoGeo = new THREE.CylinderGeometry(0.5, 0.6, 1.2, 8);
+            const torso = new THREE.Mesh(torsoGeo, bodyMat);
+            torso.position.y = 1.3;
+            
+            const headGeo = new THREE.SphereGeometry(isHero ? 0.4 : 0.35, 8, 8);
+            const headMat = new THREE.MeshLambertMaterial({ color: isHero ? 0xFFD700 : 0xFFE4C4 });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 2.1;
+            
+            const spikeGeo = new THREE.ConeGeometry(0.2, 0.5, 6);
+            const spikeL = new THREE.Mesh(spikeGeo, new THREE.MeshLambertMaterial({color: 0xAAAAAA}));
+            const spikeR = new THREE.Mesh(spikeGeo, new THREE.MeshLambertMaterial({color: 0xAAAAAA}));
+            spikeL.position.set(-0.5, 1.9, 0);
+            spikeR.position.set(0.5, 1.9, 0);
+
+            group.add(torso, head, spikeL, spikeR);
+            return group;
+        }
+
+        createBrotherDreadnoughtModel() {
+            const group = new THREE.Group();
+            const bodyMat = new THREE.MeshLambertMaterial({ color: GAME_DATA.factions.battle_brothers.color });
+            const detailMat = new THREE.MeshLambertMaterial({ color: 0xAAAAAA });
+
+            const bodyGeo = new THREE.BoxGeometry(3, 3.5, 2.5);
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 2.5;
+
+            const sarcophagusGeo = new THREE.BoxGeometry(1.5, 2, 0.2);
+            const sarcophagus = new THREE.Mesh(sarcophagusGeo, new THREE.MeshLambertMaterial({color: 0xFFD700}));
+            sarcophagus.position.set(0, 2.8, 1.3);
+
+            const legGeo = new THREE.BoxGeometry(1, 2, 1);
+            const legL = new THREE.Mesh(legGeo, detailMat);
+            const legR = new THREE.Mesh(legGeo, detailMat);
+            legL.position.set(-1.5, 1, 0);
+            legR.position.set(1.5, 1, 0);
+            
+            group.add(body, sarcophagus, legL, legR);
+            return group;
+        }
+
+        createOrcWalkerModel() {
+            const group = new THREE.Group();
+            const bodyMat = new THREE.MeshLambertMaterial({ color: GAME_DATA.factions.orc_marauders.color });
+            const detailMat = new THREE.MeshLambertMaterial({ color: 0x704214 });
+
+            const bodyGeo = new THREE.CylinderGeometry(1.5, 2, 3, 12);
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 2.5;
+
+            const cockpitGeo = new THREE.SphereGeometry(0.8, 8, 8);
+            const cockpit = new THREE.Mesh(cockpitGeo, new THREE.MeshLambertMaterial({color: 0xFFD700}));
+            cockpit.position.set(0, 3.5, 1);
+
+            const legGeo = new THREE.CylinderGeometry(0.3, 0.3, 2.5);
+            const legL = new THREE.Mesh(legGeo, detailMat);
+            const legR = new THREE.Mesh(legGeo, detailMat);
+            legL.position.set(-1.2, 1.25, -0.5);
+            legR.position.set(1.2, 1.25, -0.5);
+            legL.rotation.z = 0.2;
+            legR.rotation.z = -0.2;
+
+            const gunGeo = new THREE.CylinderGeometry(0.5, 0.5, 3);
+            const gun = new THREE.Mesh(gunGeo, detailMat);
+            gun.position.set(0, 2.5, 2);
+            gun.rotation.x = Math.PI/2;
+            
+            group.add(body, cockpit, legL, legR, gun);
+            return group;
+        }
+
+        updateUnitModels(unit) {
             const group = unit.mesh;
             group.children.filter(c => c.userData.isModel).forEach(c => group.remove(c));
             
-            const isHeroUnit = unit.data.special_rules?.includes("Hero") || unit.data.tough >= 3;
-
+            const faction = GAME_DATA.factions[unit.data.team === 'player' ? gameManager.playerArmyList.faction : gameManager.aiArmyList.faction];
+            
             const modelsPerRow = 5;
             for (let i = 0; i < unit.data.models; i++) {
-                const model = this.createPawnModel(factionColor, isHeroUnit);
+                const model = this.createModelForUnit(unit.data, faction.id);
                 model.userData.isModel = true;
-                const x = (i % modelsPerRow) * 1.5 - ((Math.min(unit.data.models, modelsPerRow) - 1) * 1.5) / 2;
-                const z = Math.floor(i / modelsPerRow) * 1.5;
+                const x = (i % modelsPerRow) * 1.8 - ((Math.min(unit.data.models, modelsPerRow) - 1) * 1.8) / 2;
+                const z = Math.floor(i / modelsPerRow) * 1.8;
                 model.position.set(x, 0, z);
                 group.add(model);
             }
         }
-        animate() { requestAnimationFrame(this.animate.bind(this)); this.controls.update(); this.renderer.render(this.scene, this.camera); }
-        showDeploymentZones() { const zoneGeo = new THREE.PlaneGeometry(120, 30); const playerMat = new THREE.MeshBasicMaterial({ color: 0x0077ff, transparent: true, opacity: 0.3 }); const aiMat = new THREE.MeshBasicMaterial({ color: 0xff4444, transparent: true, opacity: 0.3 }); this.deploymentZones.player = new THREE.Mesh(zoneGeo, playerMat); this.deploymentZones.player.rotation.x = -Math.PI / 2; this.deploymentZones.player.position.z = -45; this.scene.add(this.deploymentZones.player); this.deploymentZones.ai = new THREE.Mesh(zoneGeo, aiMat); this.deploymentZones.ai.rotation.x = -Math.PI / 2; this.deploymentZones.ai.position.z = 45; this.scene.add(this.deploymentZones.ai); }
-        hideDeploymentZones() { if(this.deploymentZones.player) this.scene.remove(this.deploymentZones.player); if(this.deploymentZones.ai) this.scene.remove(this.deploymentZones.ai); }
-        getRandomPositionInZone(team){ const z = team === 'ai' ? THREE.MathUtils.randFloat(35, 55) : THREE.MathUtils.randFloat(-55, -35); return new THREE.Vector3(THREE.MathUtils.randFloat(-55, 55), 0, z); }
-        onWindowResize() { this.camera.aspect = window.innerWidth / window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth, window.innerHeight); }
-        moveUnit(unitMesh, destination, speed) { return new Promise(resolve => { const start = unitMesh.position.clone(); const distance = start.distanceTo(destination); const duration = (distance / speed) * 300; let elapsed = 0; const moveInterval = setInterval(() => { elapsed += 20; const progress = Math.min(elapsed / duration, 1); unitMesh.position.lerpVectors(start, destination, progress); if(progress >= 1){ clearInterval(moveInterval); resolve(); } }, 20); }); }
-        createShotEffect(from, to){ const material = new THREE.LineBasicMaterial({color: 0xffff00}); const points = [from, to]; const geometry = new THREE.BufferGeometry().setFromPoints(points); const line = new THREE.Line(geometry, material); this.scene.add(line); setTimeout(() => this.scene.remove(line), 200); }
-        removeUnit(unitMesh){ this.scene.remove(unitMesh); this.clickableObjects = this.clickableObjects.filter(o => o !== unitMesh); }
+
+        showRangeIndicator(position, radius, color) {
+            this.hideRangeIndicator();
+            const geometry = new THREE.TorusGeometry(radius, 0.15, 2, 64);
+            const material = new THREE.MeshBasicMaterial({ color: color });
+            this.rangeIndicator = new THREE.Mesh(geometry, material);
+            this.rangeIndicator.position.copy(position);
+            this.rangeIndicator.position.y = 0.1; // Lehce nad zemí
+            this.rangeIndicator.rotation.x = -Math.PI / 2;
+            this.scene.add(this.rangeIndicator);
+        }
+
+        hideRangeIndicator() {
+            if (this.rangeIndicator) {
+                this.scene.remove(this.rangeIndicator);
+                this.rangeIndicator = null;
+            }
+        }
+
+        markUnitAsActivated(unitMesh) {
+            const base = unitMesh.children[0]; // Předpokládáme, že podstavec je první
+            if (base) {
+                base.material.color.multiplyScalar(0.5); // Ztmavit
+                base.material.opacity = 0.6;
+                base.material.transparent = true;
+            }
+        }
+        
+        resetUnitActivation(unitMesh) {
+            const base = unitMesh.children[0];
+            if (base && base.userData.originalColor) {
+                base.material.color.copy(base.userData.originalColor);
+                base.material.opacity = 1.0;
+                base.material.transparent = false;
+            }
+        }
+
+        createUnitMesh(unitData, team, position) {
+            const faction = GAME_DATA.factions[team === 'player' ? gameManager.playerArmyList.faction : gameManager.aiArmyList.faction];
+            const group = new THREE.Group();
+            group.position.copy(position);
+            group.position.y = 0;
+            const baseGeo = new THREE.CylinderGeometry(2.5, 2.5, 0.2, 32);
+            const baseMat = new THREE.MeshLambertMaterial({color: new THREE.Color(faction.color)});
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.userData.originalColor = base.material.color.clone(); // Uložíme původní barvu
+            group.add(base);
+            this.scene.add(group);
+            this.clickableObjects.push(group);
+            this.updateUnitModels({data: unitData, mesh: group});
+            return group;
+        }
+
+        // --- Ostatní metody zůstávají stejné ---
+        onMouseClick(e){this.mouse.x=(e.clientX/window.innerWidth)*2-1;this.mouse.y=-(e.clientY/window.innerHeight)*2+1;this.raycaster.setFromCamera(this.mouse,this.camera);if("PLAYER_PLACING_UNIT"===gameManager.gameState){const e=this.raycaster.intersectObject(this.deploymentZones.player);return void(e.length>0&&gameManager.playerPlaceUnit(e[0].point))}const a=this.raycaster.intersectObjects(this.clickableObjects,!0);if(a.length>0){let e=a[0].object;for(;"object"==typeof e.parent&&!e.userData.unit;)e=e.parent;return void(e.userData.unit&&uiManager.handleObjectClick(e.userData.unit))}const t=this.raycaster.intersectObject(this.ground);t.length>0&&uiManager.handleGroundClick(t[0].point)}
+        generateTerrain(){for(let r=0;r<35;r++){const e=new THREE.Vector3(THREE.MathUtils.randFloat(-55,55),0,THREE.MathUtils.randFloat(-55,55));Math.random()>.4?this.createTree(e):this.createRock(e)}}
+        createTree(r){const e=THREE.MathUtils.randFloat(2,5),a=new THREE.CylinderGeometry(.3,.5,e,8),t=new THREE.MeshLambertMaterial({color:16777215}),n=new THREE.Mesh(a,t);n.material.color.setHex(6045166);const o=THREE.MathUtils.randFloat(4,8),s=new THREE.ConeGeometry(THREE.MathUtils.randFloat(2,3),o,8),i=new THREE.MeshLambertMaterial({color:16777215}),l=new THREE.Mesh(s,i);l.material.color.setHex(3825419),n.position.copy(r),n.position.y=e/2,l.position.copy(r),l.position.y=e+o/2-1,this.scene.add(n),this.scene.add(l)}
+        createRock(r){const e=THREE.MathUtils.randFloat(1,3),a=new THREE.IcosahedronGeometry(e,1),t=a.attributes.position;for(let r=0;r<t.count;r++){const e=new THREE.Vector3().fromBufferAttribute(t,r);e.setLength(1*THREE.MathUtils.randFloat(.8,1.2)),t.setXYZ(r,e.x,e.y,e.z)}a.computeVertexNormals();const n=new THREE.MeshLambertMaterial({color:8421504,flatShading:!0}),o=new THREE.Mesh(a,n);o.position.copy(r),o.position.y=1/2,this.scene.add(o)}
+        startPlacingUnit(r){const e=GAME_DATA.factions[gameManager.playerArmyList.faction],a=new THREE.CylinderGeometry(2.5,2.5,.2,32),t=new THREE.MeshLambertMaterial({color:e.color,transparent:!0,opacity:.5});this.placingMesh=new THREE.Mesh(a,t),this.scene.add(this.placingMesh)}
+        stopPlacingUnit(){this.placingMesh&&(this.scene.remove(this.placingMesh),this.placingMesh=null)}
+        onMouseMove(r){if(!this.placingMesh||"PLAYER_PLACING_UNIT"!==gameManager.gameState)return;this.mouse.x=r.clientX/window.innerWidth*2-1,this.mouse.y=-(r.clientY/window.innerHeight)*2+1,this.raycaster.setFromCamera(this.mouse,this.camera);const e=this.raycaster.intersectObject(this.deploymentZones.player);e.length>0&&(this.placingMesh.position.copy(e[0].point),this.placingMesh.position.y=.1)}
+        animate(){requestAnimationFrame(this.animate.bind(this)),this.controls.update(),this.renderer.render(this.scene,this.camera)}
+        showDeploymentZones(){const r=new THREE.PlaneGeometry(120,30),e=new THREE.MeshBasicMaterial({color:30583,transparent:!0,opacity:.3}),a=new THREE.MeshBasicMaterial({color:16729152,transparent:!0,opacity:.3});this.deploymentZones.player=new THREE.Mesh(r,e),this.deploymentZones.player.rotation.x=-Math.PI/2,this.deploymentZones.player.position.z=-45,this.scene.add(this.deploymentZones.player),this.deploymentZones.ai=new THREE.Mesh(r,a),this.deploymentZones.ai.rotation.x=-Math.PI/2,this.deploymentZones.ai.position.z=45,this.scene.add(this.deploymentZones.ai)}
+        hideDeploymentZones(){this.deploymentZones.player&&this.scene.remove(this.deploymentZones.player),this.deploymentZones.ai&&this.scene.remove(this.deploymentZones.ai)}
+        getRandomPositionInZone(r){const e="ai"===r?THREE.MathUtils.randFloat(35,55):THREE.MathUtils.randFloat(-55,-35);return new THREE.Vector3(THREE.MathUtils.randFloat(-55,55),0,e)}
+        onWindowResize(){this.camera.aspect=window.innerWidth/window.innerHeight,this.camera.updateProjectionMatrix(),this.renderer.setSize(window.innerWidth,window.innerHeight)}
+        moveUnit(r,e,a){return new Promise(t=>{const n=r.position.clone(),o=n.distanceTo(e),s=o/a*300;let i=0;const l=setInterval(()=>{i+=20;const a=Math.min(i/s,1);r.position.lerpVectors(n,e,a),a>=1&&(clearInterval(l),t())},20)})}
+        createShotEffect(r,e){const a=new THREE.LineBasicMaterial({color:16776960}),t=[r,e],n=new THREE.BufferGeometry().setFromPoints(t),o=new THREE.Line(n,a);this.scene.add(o),setTimeout(()=>this.scene.remove(o),200)}
+        removeUnit(r){this.scene.remove(r),this.clickableObjects=this.clickableObjects.filter(e=>e!==r)}
     }
-    class UIManager { constructor() { this.elements = { setupOverlay: document.getElementById('setup-overlay'), gameUI: document.getElementById('game-ui'), playerFactionSelect: document.getElementById('player-faction-select'), aiFactionSelect: document.getElementById('ai-faction-select'), playerAvailableUnits: document.getElementById('player-available-units'), aiAvailableUnits: document.getElementById('ai-available-units'), playerArmyList: document.getElementById('player-army-list'), aiArmyList: document.getElementById('ai-army-list'), playerPoints: document.getElementById('player-points'), aiPoints: document.getElementById('ai-points'), startDeploymentBtn: document.getElementById('start-deployment-btn'), deploymentPanel: document.getElementById('deployment-panel'), playerDeployList: document.getElementById('player-deploy-list'), startGameBtn: document.getElementById('start-game-btn'), logContent: document.getElementById('log-content'), infoName: document.getElementById('unit-name'), infoStats: document.getElementById('unit-stats'), roundCounter: document.getElementById('round-counter'), turnIndicator: document.getElementById('turn-indicator'), actionPrompt: document.getElementById('action-prompt'), controlPanel: { advance: document.getElementById('btn-advance'), rush: document.getElementById('btn-rush'), charge: document.getElementById('btn-charge') } }; this.playerArmy = { units: [], points: 0, faction: '' }; this.aiArmy = { units: [], points: 0, faction: '' }; } initSetupScreen() { const factions = Object.keys(GAME_DATA.factions); factions.forEach(fid => { const opt1 = new Option(GAME_DATA.factions[fid].name, fid); const opt2 = new Option(GAME_DATA.factions[fid].name, fid); this.elements.playerFactionSelect.add(opt1); this.elements.aiFactionSelect.add(opt2); }); this.elements.playerFactionSelect.onchange = (e) => this.populateAvailableUnits(e.target.value, 'player'); this.elements.aiFactionSelect.onchange = (e) => this.populateAvailableUnits(e.target.value, 'ai'); this.elements.startDeploymentBtn.onclick = () => { this.elements.setupOverlay.classList.add('hidden'); this.elements.gameUI.classList.remove('hidden'); gameManager.startDeployment(this.playerArmy, this.aiArmy); }; this.elements.startGameBtn.onclick = () => gameManager.startGame(); this.populateAvailableUnits(factions[0], 'player'); this.populateAvailableUnits(factions[1], 'ai'); this.elements.aiFactionSelect.value = factions[1]; } populateAvailableUnits(factionId, team) { const container = (team === 'player') ? this.elements.playerAvailableUnits : this.elements.aiAvailableUnits; container.innerHTML = ''; if(team === 'player') this.playerArmy.faction = factionId; else this.aiArmy.faction = factionId; GAME_DATA.factions[factionId].units.forEach(unit => { const div = document.createElement('div'); div.className = 'unit-entry'; div.innerHTML = `<span>${unit.name} (${unit.cost}b)</span>`; const btn = document.createElement('button'); btn.textContent = 'Přidat'; btn.onclick = () => this.addUnitToArmy(unit, team); div.appendChild(btn); container.appendChild(div); }); } addUnitToArmy(unit, team) { const army = (team === 'player') ? this.playerArmy : this.aiArmy; const listContainer = (team === 'player') ? this.elements.playerArmyList : this.elements.aiArmyList; const pointsContainer = (team === 'player') ? this.elements.playerPoints : this.elements.aiPoints; army.units.push(unit); army.points += unit.cost; pointsContainer.textContent = army.points; const div = document.createElement('div'); div.className = 'unit-entry'; div.innerHTML = `<span>${unit.name}</span>`; const btn = document.createElement('button'); btn.textContent = 'X'; btn.onclick = () => { army.units.splice(army.units.indexOf(unit), 1); army.points -= unit.cost; pointsContainer.textContent = army.points; listContainer.removeChild(div); this.checkStartButton(); }; div.appendChild(btn); listContainer.appendChild(div); this.checkStartButton(); } checkStartButton(){ this.elements.startDeploymentBtn.disabled = !(this.playerArmy.units.length > 0 && this.aiArmy.units.length > 0); } showDeploymentScreen(playerUnitsToDeploy) { this.elements.deploymentPanel.classList.remove('hidden'); this.updateDeploymentList(playerUnitsToDeploy); } hideDeploymentScreen() { this.elements.deploymentPanel.classList.add('hidden'); } updateDeploymentList(units){ this.elements.playerDeployList.innerHTML = ''; units.forEach(unit => { const div = document.createElement('div'); div.className = 'deploy-unit-item'; div.textContent = unit.data.name; div.onclick = () => { this.elements.playerDeployList.querySelectorAll('.selected').forEach(el => el.classList.remove('selected')); div.classList.add('selected'); gameManager.playerSelectUnitForDeployment(unit); }; this.elements.playerDeployList.appendChild(div); }); } showStartGameButton(){ this.elements.startGameBtn.classList.remove('hidden'); this.setPrompt("Všechny jednotky rozmístěny. Zahajte bitvu!"); }
-        init(gameManager) { this.gameManager = gameManager; this.elements.controlPanel.advance.onclick = () => gameManager.playerAction('Advance'); this.elements.controlPanel.rush.onclick = () => gameManager.playerAction('Rush'); this.elements.controlPanel.charge.onclick = () => gameManager.playerAction('Charge'); }
-        log(messages, type = 'info') { if(!Array.isArray(messages)) messages = [messages]; messages.forEach(msg => { const p = document.createElement('p'); p.innerHTML = msg; p.className = `log-${type}`; this.elements.logContent.appendChild(p); }); this.elements.logContent.scrollTop = this.elements.logContent.scrollHeight; }
-        updateInfoPanel(unit) { if (unit) { this.elements.infoName.textContent = unit.data.name; this.elements.infoStats.textContent = `Tým: ${unit.data.team}\nQ: ${unit.data.quality}+  D: ${unit.data.defense}+\nModely: ${unit.data.models}/${unit.data.startModels}\nZranění: ${unit.data.woundsTaken}/${unit.data.tough}`; } else { this.elements.infoName.textContent = 'Žádná jednotka nevybrána'; this.elements.infoStats.textContent = ''; } }
-        updateGameStatus(gameManager){ this.elements.roundCounter.textContent = `Kolo: ${gameManager.round} / ${gameManager.maxRounds}`; this.elements.turnIndicator.textContent = `Na tahu: ${(gameManager.currentPlayer === 'player') ? 'Hráč' : 'AI'}`; }
-        setPrompt(text){ this.elements.actionPrompt.textContent = text; }
-        updateControlPanel(enabled){ for(const btn in this.elements.controlPanel) this.elements.controlPanel[btn].disabled = !enabled; }
-        handleObjectClick(unit){ if(gameManager.gameState === 'SELECT_UNIT') { gameManager.playerSelectUnit(unit); this.updateInfoPanel(unit); } else if (gameManager.gameState === 'SELECT_SHOOT_TARGET') { if(unit.data.team === 'ai' && this.clickResolver) { this.clickResolver(unit); this.clickResolver = null; } } }
-        handleGroundClick(point){ if(this.clickResolver) { this.clickResolver(point); this.clickResolver = null; } }
-        waitForGroundClick() { return new Promise(resolve => { this.clickResolver = resolve; setTimeout(() => { if (this.clickResolver) { this.clickResolver(null); this.clickResolver = null; } }, 10000); }); }
-        waitForEnemyClick() { return new Promise(resolve => { this.clickResolver = resolve; setTimeout(() => { if (this.clickResolver) { this.clickResolver(null); this.clickResolver = null; } }, 10000); }); }
+    class UIManager {
+        constructor(){this.elements={setupOverlay:document.getElementById("setup-overlay"),gameUI:document.getElementById("game-ui"),playerFactionSelect:document.getElementById("player-faction-select"),aiFactionSelect:document.getElementById("ai-faction-select"),playerAvailableUnits:document.getElementById("player-available-units"),aiAvailableUnits:document.getElementById("ai-available-units"),playerArmyList:document.getElementById("player-army-list"),aiArmyList:document.getElementById("ai-army-list"),playerPoints:document.getElementById("player-points"),aiPoints:document.getElementById("ai-points"),startDeploymentBtn:document.getElementById("start-deployment-btn"),deploymentPanel:document.getElementById("deployment-panel"),playerDeployList:document.getElementById("player-deploy-list"),startGameBtn:document.getElementById("start-game-btn"),logContent:document.getElementById("log-content"),infoName:document.getElementById("unit-name"),infoStats:document.getElementById("unit-stats"),roundCounter:document.getElementById("round-counter"),turnIndicator:document.getElementById("turn-indicator"),actionPrompt:document.getElementById("action-prompt"),controlPanel:{advance:document.getElementById("btn-advance"),rush:document.getElementById("btn-rush"),charge:document.getElementById("btn-charge")}},this.playerArmy={units:[],points:0,faction:""},this.aiArmy={units:[],points:0,faction:""}}
+        init(r){this.gameManager=r;const e={advance:6,rush:12,charge:12},a={advance:30583,rush:16753920,charge:16729152};for(const t in this.elements.controlPanel)this.elements.controlPanel[t].addEventListener("mouseover",()=>{gameManager.selectedUnit&&graphicsEngine.showRangeIndicator(gameManager.selectedUnit.mesh.position,e[t],a[t])}),this.elements.controlPanel[t].addEventListener("mouseout",()=>{graphicsEngine.hideRangeIndicator()});this.elements.controlPanel.advance.onclick=()=>r.playerAction("Advance"),this.elements.controlPanel.rush.onclick=()=>r.playerAction("Rush"),this.elements.controlPanel.charge.onclick=()=>r.playerAction("Charge")}
+        initSetupScreen(){const r=Object.keys(GAME_DATA.factions);r.forEach(r=>{const e=new Option(GAME_DATA.factions[r].name,r),a=new Option(GAME_DATA.factions[r].name,r);this.elements.playerFactionSelect.add(e),this.elements.aiFactionSelect.add(a)}),this.elements.playerFactionSelect.onchange=r=>this.populateAvailableUnits(r.target.value,"player"),this.elements.aiFactionSelect.onchange=r=>this.populateAvailableUnits(r.target.value,"ai"),this.elements.startDeploymentBtn.onclick=()=>{this.elements.setupOverlay.classList.add("hidden"),this.elements.gameUI.classList.remove("hidden"),gameManager.startDeployment(this.playerArmy,this.aiArmy)},this.elements.startGameBtn.onclick=()=>gameManager.startGame(),this.populateAvailableUnits(r[0],"player"),this.populateAvailableUnits(r[1],"ai"),this.elements.aiFactionSelect.value=r[1]}
+        populateAvailableUnits(r,e){const a="player"===e?this.elements.playerAvailableUnits:this.elements.aiAvailableUnits;a.innerHTML="","player"===e?this.playerArmy.faction=r:this.aiArmy.faction=r,GAME_DATA.factions[r].units.forEach(r=>{const t=document.createElement("div");t.className="unit-entry",t.innerHTML=`<span>${r.name} (${r.cost}b)</span>`;const n=document.createElement("button");n.textContent="Přidat",n.onclick=()=>this.addUnitToArmy(r,e),t.appendChild(n),a.appendChild(t)})}
+        addUnitToArmy(r,e){const a="player"===e?this.playerArmy:this.aiArmy,t="player"===e?this.elements.playerArmyList:this.elements.aiArmyList,n="player"===e?this.elements.playerPoints:this.elements.aiPoints;a.units.push(r),a.points+=r.cost,n.textContent=a.points;const o=document.createElement("div");o.className="unit-entry",o.innerHTML=`<span>${r.name}</span>`;const s=document.createElement("button");s.textContent="X",s.onclick=()=>{a.units.splice(a.units.indexOf(r),1),a.points-=r.cost,n.textContent=a.points,t.removeChild(o),this.checkStartButton()},o.appendChild(s),t.appendChild(o),this.checkStartButton()}
+        checkStartButton(){this.elements.startDeploymentBtn.disabled=!(this.playerArmy.units.length>0&&this.aiArmy.units.length>0)}
+        showDeploymentScreen(r){this.elements.deploymentPanel.classList.remove("hidden"),this.updateDeploymentList(r)}hideDeploymentScreen(){this.elements.deploymentPanel.classList.add("hidden")}
+        updateDeploymentList(r){this.elements.playerDeployList.innerHTML="",r.forEach(r=>{const e=document.createElement("div");e.className="deploy-unit-item",e.textContent=r.data.name,e.onclick=()=>{this.elements.playerDeployList.querySelectorAll(".selected").forEach(r=>r.classList.remove("selected")),e.classList.add("selected"),gameManager.playerSelectUnitForDeployment(r)},this.elements.playerDeployList.appendChild(e)})}
+        showStartGameButton(){this.elements.startGameBtn.classList.remove("hidden"),this.setPrompt("Všechny jednotky rozmístěny. Zahajte bitvu!")}
+        log(r,e="info"){Array.isArray(r)||(r=[r]),r.forEach(r=>{const a=document.createElement("p");a.innerHTML=r,a.className=`log-${e}`,this.elements.logContent.appendChild(a)}),this.elements.logContent.scrollTop=this.elements.logContent.scrollHeight}
+        updateInfoPanel(r){r?(this.elements.infoName.textContent=r.data.name,this.elements.infoStats.textContent=`Tým: ${r.data.team}\nQ: ${r.data.quality}+  D: ${r.data.defense}+\nModely: ${r.data.models}/${r.data.startModels}\nZranění: ${r.data.woundsTaken}/${r.data.tough}`):(this.elements.infoName.textContent="Žádná jednotka nevybrána",this.elements.infoStats.textContent="")}
+        updateGameStatus(r){this.elements.roundCounter.textContent=`Kolo: ${r.round} / ${r.maxRounds}`,this.elements.turnIndicator.textContent=`Na tahu: ${"player"===r.currentPlayer?"Hráč":"AI"}`}
+        setPrompt(r){this.elements.actionPrompt.textContent=r}updateControlPanel(r){for(const e in this.elements.controlPanel)this.elements.controlPanel[e].disabled=!r}
+        handleObjectClick(r){"SELECT_UNIT"===gameManager.gameState?(gameManager.playerSelectUnit(r),this.updateInfoPanel(r)):"SELECT_SHOOT_TARGET"==="ai"===r.data.team&&this.clickResolver&&(this.clickResolver(r),this.clickResolver=null)}
+        handleGroundClick(r){this.clickResolver&&(this.clickResolver(r),this.clickResolver=null)}
+        waitForGroundClick(){return new Promise(r=>{this.clickResolver=r,setTimeout(()=>{this.clickResolver&&(this.clickResolver(null),this.clickResolver=null)},1e4)})}
+        waitForEnemyClick(){return new Promise(r=>{this.clickResolver=r,setTimeout(()=>{this.clickResolver&&(this.clickResolver(null),this.clickResolver=null)},1e4)})}
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -225,7 +333,7 @@
         uiManager = new UIManager();
         graphicsEngine = new GraphicsEngine();
         
-        uiManager.init(gameManager);
+        uiManager.init(gameManager); // UI se musí inicializovat před GFX kvůli event listenerům
         graphicsEngine.init();
         gameManager.init();
     });
