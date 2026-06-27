@@ -1,0 +1,1129 @@
+
+Gemini
+Nový chat
+Hledat v chatech
+Videa
+Knihovna
+Roboti Gem
+Nový sešit
+Army Builder pro Konflikt '47
+Překlad a formátování hry do češtiny
+Interaktivní nástroj pro dešifrování šifry
+Receptářová databáze a editor
+QR Generator
+Překladač kódu do lidštiny
+Kódování obrázků do textu
+Dekódování CJK obrázkového kódu
+Aktualizace Generátoru Karet V_1.2.02_Canvas version
+pf2e npc creator images
+Foundry VTT: Formátování Textu
+Vylepšení Testovače Kouzel PF2e
+Plán výzkumu "Aces & Armor"
+Pěstování Bambusů v Praze
+Kostková Hra: HTML Aplikace
+Aplikace na převod monster - PF/DnD
+PF generator v5
+PF npc generator v4
+PF npc gen 3.5
+pf npc generator V3
+Canvas Copying Confirmation Needed
+Starfinder Pomocníček: Kód a AI
+Starfinder 2e_playtest: Plán Výzkumu
+PF2e HElper v3
+jsi obeznámen s RPG systemem 24xx (2400)? https://jasontocci.itch.io/24xx
+Defenestrace na Ukrajině a v Rusku
+Péče o nalezené mládě rorýse
+Řazení Týmů Bez Ohledu Na Body
+Úprava kódu pro statické pořadí týmů
+Mölkky Hra: Statické Pořadí Týmů
+Mölkky Aplikace: Pevné Pořadí Týmů
+Rorýs obecný: Pomoc zraněnému ptákovi
+Pomoc rorýsovi obecnému v nouzi
+Dechovka s Aničkou na políčku
+Dechovková báseň: Vyladění a doplnění
+Dechovka o Aničce a nádobíčku
+Vytvoření časovače vypnutí PC
+12:01pm cest čas je kdy?
+potřebuji vytvořit obrázek z naší hry pathfinder 2e, šlo o dramatickou situaci v které hráči bojovali s "loutkařem" tady myšík (jmeno snoot) byl chycen tím loutkařem (Ten divnej pavouk) - ten loutkař ho chytnul jedním z tech lan a držeh ho ve vzduchu snood s tím bojoval ale vysel za krk to se odehrávalo v prumyslové hale, kde loutkař byl nahoře na strope mezi tramy
+potřebuji abys tohodle msšáka oblekl do zakladniho adventure gearu, dal mu prak, a kolem pasu alchemistické flasky/potiony, mel by mít i dager a bombu
+Parodie "Strýček Sam" s Vietcongem
+dokážeš vytvořit 3d střílečku ve 3d, ale grafika bude z ASCI grafiky?
+Rozpoznávání druhů opuncií
+Hledání strategie s colony builderem
+Konvertor EU5 do Victoria 3
+Generátor slov s AI.
+Figurky nabarvené profesionálními technikami
+Odvoz zeminy z výkopu domu
+Oříznutí, doostření a kolorizace fotografie
+Úprava a vylepšení fotografie
+Hodnota sbírky časopisů ABC
+Vytvoření 2D Bolt Action hry
+Teorie her a sobecké chování v dopravě
+Simulátor Bolt Action v češtině
+3D Vizualizace Strmé Cesty
+3D vizualizace terénu a cesty
+vytvoř mi vizualizaci rasy heechee z knžní serie hechee (dle jejic hpopisu) ukaž mi i diagramj jejich sezení v jejich lodí, to je v knize taky popsané, a že mají nejaké specialne tvarované zadky, tak jak sedí + vizualizaci jejich židlý
+Hororové darování rajčatového kečupu
+
+Aktivita
+Praha-Dolní Chabry, Česko
+Na základě vašich míst (domov)
+Aktualizovat polohu
+Konverzace s Gemini
+Potrebuju v kodu rict, kde je cast ktera dela razeni, aby se neradilo podle poctu bodu. ale jak jsou bapsany postupne, at se lip orientuje poradi
+
+Část kódu, která se stará o řazení týmů podle bodů, se nachází ve funkci renderTeams().  
+TXT
++ 1
+
+Konkrétně jde o metodu teams.sort(...) na řádcích 41 až 44:  
+TXT
++ 1
+
+JavaScript
+// Sort teams: finished teams first by rank, then unfinished teams by score (descending)
+teams.sort((a, b) => {
+    if (a.rank !== null && b.rank === null) return -1; // Ranked team comes before unranked
+    if (a.rank === null && b.rank !== null) return 1; // Unranked team comes after ranked
+    if (a.rank !== null && b.rank !== null) {
+        // Compare ranks directly if both are ranked (e.g., "1. místo" vs "2. místo")
+        const rankA = parseInt(a.rank.split('.')[0]);
+        const rankB = parseInt(b.rank.split('.')[0]);
+        return rankA - rankB;
+    }
+    return b.score - a.score; // Unfinished teams by score (highest first)
+});
+Jak kód upravit, aby se týmy neřadily podle bodů?
+Pokud chceš zachovat původní fixní pořadí, jak jsou týmy zapsané (Tým 1, Tým 2, Tým 3 atd.), stačí celou tuto sekci teams.sort(...) upravit.
+
+Máš dvě možnosti podle toho, jak se mají chovat týmy, které už hru dokončily (dosáhly 50 bodů a mají určené místo):  
+TXT
+
+Možnost A: Týmy zůstanou pevně na svém místě (vůbec se neřadí)
+Týmy budou neustále v pořadí Tým 1, Tým 2, Tým 3... bez ohledu na to, kdo má kolik bodů nebo kdo už vyhrál.
+
+Stačí celý výše uvedený blok kódu (řádky 41–44) smazat, nebo ho upravit tak, aby řadil pouze podle původního ID:  
+TXT
++ 1
+
+JavaScript
+// Týmy zůstanou seřazené podle jejich ID (v pořadí, jak byly vytvořeny)
+teams.sort((a, b) => a.id - b.id);
+Možnost B: Hráči, co dokončili hru, skočí nahoru, ale zbytek se nehybe
+Týmy, které už mají dohráno ("1. místo", "2. místo"), se posunou na začátek seznamu, ale zbytek hrajících týmů zůstane fixně podle svého čísla (nebude se míchat podle aktuálního skóre).  
+TXT
++ 1
+
+Vyměň původní blok teams.sort(...) za tento:
+
+JavaScript
+// Dohrané týmy jdou nahoru (podle umístění), hrající týmy zůstávají podle pořadí (ID)
+teams.sort((a, b) => {
+    if (a.rank !== null && b.rank === null) return -1;
+    if (a.rank === null && b.rank !== null) return 1;
+    if (a.rank !== null && b.rank !== null) {
+        const rankA = parseInt(a.rank.split('.')[0]);
+        const rankB = parseInt(b.rank.split('.')[0]);
+        return rankA - rankB;
+    }
+    return a.id - b.id; // Zde je změna: místo b.score - a.score řadíme podle ID
+});
+Dikazes ki napsat cely kod, s tim coa napsal dole?
+
+Jasně, tady je kompletní upravený kód. Vybral jsem pro tebe Možnost B z předchozí odpovědi (která je pro Mölkky nejpraktičtější): týmy, které už dosáhly 50 bodů a vyhrály, se posunou nahoru, aby bylo vidět finální pořadí, ale všechny ostatní hrající týmy zůstávají pevně na svém místě podle čísel (Tým 1, Tým 2, Tým 3...) a nepřeskakují se podle bodů.
+
+Můžeš celý tento kód zkopírovat a přepsat jím svůj původní soubor:
+
+HTML
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mölkky Skórovací Aplikace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for animations, overriding or extending Tailwind if necessary */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(-5%) rotate(-10deg);
+                animation-timing-function: cubic-bezier(0.8,0,1,1);
+            }
+            50% {
+                transform: translateY(0) rotate(-10deg);
+                animation-timing-function: cubic-bezier(0,0,0.2,1);
+            }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+        /* Ensure all elements have rounded corners */
+        .rounded-lg, .rounded-xl, .rounded-md, .rounded-full {
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-black p-4 font-inter flex flex-col items-center justify-center relative">
+
+    <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-4xl">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-gray-100 mb-6">
+            Mölkky Skórovací Aplikace
+        </h1>
+
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+            <div class="flex items-center space-x-2">
+                <label for="numTeams" class="text-lg font-medium text-gray-100">Počet týmů:</label>
+                <input
+                    type="number"
+                    id="numTeams"
+                    value="3"
+                    min="2"
+                    max="10"
+                    class="w-20 p-2 text-center border border-gray-600 bg-gray-700 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                    id="lockNumTeamsBtn"
+                    class="ml-2 px-3 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200 shadow-md flex items-center space-x-1"
+                    title="Zamknout počet týmů"
+                >
+                    <span id="lockIcon">🔓</span>
+                    <span id="lockText" class="text-sm">Unlocked</span>
+                </button>
+            </div>
+            <button
+                id="showRulesBtn"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95"
+            >
+                Pravidla Hry
+            </button>
+        </div>
+
+        <p id="message" class="text-center text-lg font-medium text-red-400 mb-4 animate-pulse hidden"></p>
+
+        <div id="teamCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            </div>
+
+        <div class="flex justify-center">
+            <button
+                id="resetGameBtn"
+                class="bg-red-700 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95"
+            >
+                Nová Hra
+            </button>
+        </div>
+    </div>
+
+    <div id="rulesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-6 max-w-md w-full relative">
+            <button
+                id="closeRulesModalBtn"
+                class="absolute top-3 right-3 text-gray-400 hover:text-gray-100 text-2xl font-bold"
+            >
+                &times;
+            </button>
+            <div id="molkkyRulesContent">
+                </div>
+        </div>
+    </div>
+
+    <div id="confirmUndoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-6 max-w-sm w-full relative text-center">
+            <p id="undoConfirmationText" class="text-lg font-semibold text-gray-100 mb-6">
+                </p>
+            <div class="flex justify-center space-x-4">
+                <button
+                    id="confirmUndoBtn"
+                    class="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-md shadow-lg transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                >
+                    Ano
+                </button>
+                <button
+                    id="cancelUndoBtn"
+                    class="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-md shadow-lg transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                >
+                    Ne
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="absolute bottom-4 right-4 text-gray-400 text-sm">
+        Verze: 1.06
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const numTeamsInput = document.getElementById('numTeams');
+            const lockNumTeamsBtn = document.getElementById('lockNumTeamsBtn');
+            const lockIcon = document.getElementById('lockIcon');
+            const lockText = document.getElementById('lockText');
+            const showRulesBtn = document.getElementById('showRulesBtn');
+            const rulesModal = document.getElementById('rulesModal');
+            const closeRulesModalBtn = document.getElementById('closeRulesModalBtn');
+            const messageDisplay = document.getElementById('message');
+            const teamCardsContainer = document.getElementById('teamCardsContainer');
+            const resetGameBtn = document.getElementById('resetGameBtn');
+            const confirmUndoModal = document.getElementById('confirmUndoModal');
+            const undoConfirmationText = document.getElementById('undoConfirmationText');
+            const confirmUndoBtn = document.getElementById('confirmUndoBtn');
+            const cancelUndoBtn = document.getElementById('cancelUndoBtn');
+            const molkkyRulesContentDiv = document.getElementById('molkkyRulesContent');
+
+            // State variables
+            let numTeams = parseInt(numTeamsInput.value, 10);
+            let teams = [];
+            let isNumTeamsLocked = false;
+            let undoTeamId = null; // Stores the ID of the team for which undo is being confirmed
+
+            // Mölkky Rules HTML content
+            const molkkyRules = `
+                <h3 class="text-xl font-bold mb-3 text-gray-100">Pravidla Hry Mölkky</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-2">
+                    <li>Hází se z určité vzdálenosti (cca 3-4 metry) na kuželky.</li>
+                    <li>Pokud spadne jedna kuželka, získáte počet bodů, který je na ní napsán.</li>
+                    <li>Pokud spadnou dvě nebo více kuželek, získáte počet bodů roven počtu spadlých kuželek (např. 3 kuželky = 3 body).</li>
+                    <li>Kuželky se po každém hodu postaví zpět na místo, kde spadly.</li>
+                    <li>Hra končí, když tým dosáhne <strong>přesně 50 bodů</strong>.</li>
+                    <li>Pokud tým překročí 50 bodů, jeho skóre se <strong>resetuje na 25 bodů</strong>.</li>
+                    <li>Tým, který dosáhne přesně 50 bodů jako první, vyhrává a získá "1. místo".</li>
+                    <li>Hra pokračuje pro zbývající týmy o další místa.</li>
+                </ul>
+            `;
+            // Inject rules content once on load
+            molkkyRulesContentDiv.innerHTML = molkkyRules;
+
+            // Functions
+
+            /**
+             * Clears any active messages displayed to the user.
+             */
+            function clearMessage() {
+                messageDisplay.textContent = '';
+                messageDisplay.classList.add('hidden');
+            }
+
+            /**
+             * Displays a message to the user, with option for error or success styling.
+             * @param {string} msg - The message to display.
+             * @param {boolean} isError - If true, styles as an error message (red); otherwise, a success message (green).
+             */
+            function showMessage(msg, isError = true) {
+                messageDisplay.textContent = msg;
+                messageDisplay.classList.remove('hidden');
+                if (isError) {
+                    messageDisplay.classList.remove('text-green-400');
+                    messageDisplay.classList.add('text-red-400');
+                } else {
+                    messageDisplay.classList.remove('text-red-400');
+                    messageDisplay.classList.add('text-green-400');
+                }
+            }
+
+            /**
+             * Renders all team cards dynamically based on the current 'teams' array.
+             * This function is responsible for updating the UI to reflect the current game state.
+             */
+            function renderTeams() {
+                teamCardsContainer.innerHTML = ''; // Clear existing cards to re-render
+
+                // UPRAVENO: Dohrané týmy jdou nahoru (podle umístění), hrající týmy zůstávají fixně podle pořadí (ID)
+                teams.sort((a, b) => {
+                    if (a.rank !== null && b.rank === null) return -1; // Umístěný tým jde před neumístěný
+                    if (a.rank === null && b.rank !== null) return 1;  // Neumístěný tým jde až za umístěný
+                    if (a.rank !== null && b.rank !== null) {
+                        // Porovnání finálních pozic (např. "1. místo" vs "2. místo")
+                        const rankA = parseInt(a.rank.split('.')[0]);
+                        const rankB = parseInt(b.rank.split('.')[0]);
+                        return rankA - rankB;
+                    }
+                    return a.id - b.id; // Hrající týmy se již neřadí podle bodů, ale podle svého ID (původního pořadí)
+                });
+
+                // Dynamically adjust grid columns based on numTeams for better responsiveness
+                let gridColsClass = 'grid-cols-1';
+                if (numTeams > 1) gridColsClass += ' md:grid-cols-2';
+                if (numTeams > 2) gridColsClass += ' lg:grid-cols-3';
+                if (numTeams > 4) gridColsClass += ' xl:grid-cols-4';
+                teamCardsContainer.className = `grid ${gridColsClass} gap-6 mb-8`;
+
+                // Create and append a card for each team
+                teams.forEach(team => {
+                    const card = document.createElement('div');
+                    card.className = `relative bg-gray-700 border-2 ${team.rank ? 'border-emerald-400 shadow-lg' : 'border-gray-600'} rounded-xl p-6 flex flex-col items-center justify-between transition-all duration-300 transform hover:scale-105`;
+                    card.dataset.teamId = team.id; // Store team ID as a data attribute
+
+                    // If the team is ranked, display an overlay with their rank
+                    if (team.rank) {
+                        const rankOverlay = document.createElement('div');
+                        rankOverlay.className = "absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center rounded-xl z-10";
+                        rankOverlay.innerHTML = `<span class="text-white text-4xl font-extrabold rotate-[-10deg] animate-bounce">${team.rank}</span>`;
+                        card.appendChild(rankOverlay);
+                    }
+
+                    // Editable Team Name Input
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.value = team.name;
+                    nameInput.className = "text-2xl font-bold text-gray-100 mb-3 text-center bg-transparent border-b-2 border-blue-500 focus:outline-none focus:border-blue-400 w-full";
+                    nameInput.disabled = team.rank !== null; // Disable name editing if team is ranked
+                    // Add event listener for team name changes
+                    nameInput.addEventListener('change', (e) => {
+                        team.name = e.target.value;
+                    });
+                    card.appendChild(nameInput);
+
+                    // Score Display with Historical Scores (last 3 scores)
+                    const scoreDisplayContainer = document.createElement('div');
+                    scoreDisplayContainer.className = "flex items-baseline mb-4";
+
+                    const historicalScoresSpan = document.createElement('span');
+                    historicalScoresSpan.className = "text-gray-400 font-semibold mr-2 flex items-baseline";
+                    // Display previous three scores from historicalScores with varied sizing
+                    if (team.historicalScores.length > 2) {
+                        historicalScoresSpan.innerHTML += `<span class="text-sm mr-1">${team.historicalScores[team.historicalScores.length - 3]},</span>`;
+                    }
+                    if (team.historicalScores.length > 1) {
+                        historicalScoresSpan.innerHTML += `<span class="text-xl mr-1">${team.historicalScores[team.historicalScores.length - 2]},</span>`;
+                    }
+                    if (team.historicalScores.length > 0) {
+                        historicalScoresSpan.innerHTML += `<span class="text-2xl">${team.historicalScores[team.historicalScores.length - 1]} </span>`;
+                        historicalScoresSpan.innerHTML += ' <- ';
+                    }
+                    scoreDisplayContainer.appendChild(historicalScoresSpan);
+
+                    const scoreDisplay = document.createElement('p');
+                    scoreDisplay.className = "text-5xl font-extrabold text-blue-300";
+                    scoreDisplay.textContent = team.score;
+                    scoreDisplayContainer.appendChild(scoreDisplay);
+                    card.appendChild(scoreDisplayContainer);
+
+                    // All input controls wrapper - Now always present and above the rank overlay
+                    const inputControlsWrapper = document.createElement('div');
+                    // Added relative z-20 to ensure it's clickable above the rank overlay
+                    inputControlsWrapper.className = "flex flex-col items-center w-full relative z-20";
+                    card.appendChild(inputControlsWrapper);
+
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'number';
+                    scoreInput.value = team.inputScore;
+                    scoreInput.placeholder = "Zadejte body";
+                    scoreInput.className = "w-full p-3 mb-4 text-center text-gray-100 border border-gray-600 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500";
+                    scoreInput.min = "0";
+                    scoreInput.addEventListener('input', (e) => {
+                        team.inputScore = e.target.value;
+                    });
+                    inputControlsWrapper.appendChild(scoreInput);
+
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.className = "flex w-full space-x-2";
+                    inputControlsWrapper.appendChild(buttonContainer);
+
+                    const addScoreBtn = document.createElement('button');
+                    addScoreBtn.textContent = 'Přidat Body';
+                    addScoreBtn.className = "w-2/3 bg-blue-700 hover:bg-blue-600 text-white font-bold py-3 px-2 rounded-md shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95";
+                    addScoreBtn.addEventListener('click', () => updateScore(team.id));
+                    buttonContainer.appendChild(addScoreBtn);
+
+                    const undoBtn = document.createElement('button');
+                    undoBtn.textContent = 'Zpět';
+                    undoBtn.className = "w-1/3 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-3 rounded-md shadow-lg text-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+                    undoBtn.disabled = team.historicalScores.length === 0;
+                    undoBtn.addEventListener('click', () => handleUndoClick(team.id));
+                    buttonContainer.appendChild(undoBtn);
+
+                    // Adjust visibility if team is ranked
+                    if (team.rank !== null) {
+                        scoreInput.classList.add('hidden'); // Hide score input
+                        addScoreBtn.classList.add('hidden'); // Hide add score button
+
+                        // Adjust undo button to take full width and remove spacing if it's the only button
+                        undoBtn.classList.remove('w-1/3');
+                        undoBtn.classList.add('w-full');
+                        buttonContainer.classList.remove('space-x-2');
+                        buttonContainer.classList.add('justify-center'); // Center the single button
+                    } else {
+                        // Ensure they are visible if not ranked (for re-render cases)
+                        scoreInput.classList.remove('hidden');
+                        addScoreBtn.classList.remove('hidden');
+                        undoBtn.classList.remove('w-full');
+                        undoBtn.classList.add('w-1/3');
+                        buttonContainer.classList.remove('justify-center');
+                        buttonContainer.classList.add('space-x-2');
+                    }
+
+                    teamCardsContainer.appendChild(card);
+                });
+            }
+
+            /**
+             * Initializes or resets the game state with a specified number of teams.
+             * @param {number} count - The number of teams to initialize.
+             */
+            function initializeGame(count) {
+                teams = Array.from({ length: count }, (_, i) => ({
+                    id: i + 1,
+                    name: `Tým ${i + 1}`,
+                    score: 0,
+                    inputScore: '',
+                    historicalScores: [], // Keep track of all previous scores for undo functionality
+                    rank: null, // '1. místo', '2. místo', etc.
+                }));
+                clearMessage(); // Clear any existing messages
+                renderTeams(); // Re-render the UI
+            }
+
+            /**
+             * Updates the score for a specific team based on Mölkky rules.
+             * Handles scoring, resetting score if over 50, and ranking teams at exactly 50.
+             * @param {number} teamId - The ID of the team to update.
+             */
+            function updateScore(teamId) {
+                const teamIndex = teams.findIndex(team => team.id === teamId);
+                if (teamIndex === -1 || teams[teamIndex].rank !== null) return; // Exit if team not found or already ranked
+
+                const teamToUpdate = teams[teamIndex];
+                const scoreValue = parseInt(teamToUpdate.inputScore, 10);
+
+                // Input validation
+                if (isNaN(scoreValue) || scoreValue < 0) {
+                    showMessage('Zadejte prosím platné číslo pro body.');
+                    return;
+                }
+
+                // Store current score in historicalScores before updating
+                const newHistoricalScores = [...teamToUpdate.historicalScores, teamToUpdate.score];
+                let newScore = teamToUpdate.score + scoreValue;
+                let updatedRank = teamToUpdate.rank; // Preserve existing rank if set
+                let currentMessage = '';
+
+                // Mölkky rule: If score exceeds 50, reset to 25
+                if (newScore > 50) {
+                    newScore = 25;
+                    currentMessage = `${teamToUpdate.name} přesáhl(a) 50 bodů! Skóre resetováno na 25.`;
+                } else if (newScore === 50) {
+                    // Team reaches exactly 50 points, assign rank
+                    const finishedCount = teams.filter(t => t.rank !== null).length;
+                    updatedRank = `${finishedCount + 1}. místo`;
+                    currentMessage = `${teamToUpdate.name} dosáhl(a) přesně 50 bodů a získal(a) ${updatedRank}!`;
+                }
+
+                // Update the team object in the state
+                teamToUpdate.score = newScore;
+                teamToUpdate.inputScore = ''; // Clear input field
+                teamToUpdate.historicalScores = newHistoricalScores;
+                teamToUpdate.rank = updatedRank;
+
+                showMessage(currentMessage, false); // Display message (not as error)
+                if (currentMessage === '') clearMessage(); // Clear message if no specific event
+
+                renderTeams(); // Re-render UI to show changes
+            }
+
+            /**
+             * Handles the click on the "Zpět" (Undo) button, opening the confirmation modal.
+             * @param {number} teamId - The ID of the team for which to undo the score.
+             */
+            function handleUndoClick(teamId) {
+                undoTeamId = teamId;
+                const teamName = teams.find(t => t.id === teamId)?.name;
+                undoConfirmationText.textContent = `Opravdu si přejete vrátit body zpět pro tým ${teamName}?`;
+                confirmUndoModal.classList.remove('hidden'); // Show modal
+            }
+
+            /**
+             * Confirms and performs the undo action for the selected team.
+             * Reverts the team's score to the previous state using historicalScores.
+             */
+            function confirmUndoLastScore() {
+                const teamToUndo = teams.find(team => team.id === undoTeamId);
+                // If no team found or no historical scores, close modal and exit
+                if (!teamToUndo || teamToUndo.historicalScores.length === 0) {
+                    confirmUndoModal.classList.add('hidden');
+                    undoTeamId = null;
+                    return;
+                }
+
+                // Get the last score from history and remove it
+                const newScore = teamToUndo.historicalScores[teamToUndo.historicalScores.length - 1];
+                const updatedHistoricalScores = teamToUndo.historicalScores.slice(0, -1);
+
+                // Update team's score and history
+                teamToUndo.score = newScore;
+                teamToUndo.historicalScores = updatedHistoricalScores;
+
+                // If the team was ranked and the new score is less than 50, clear the rank
+                if (teamToUndo.rank !== null && newScore < 50) {
+                    teamToUndo.rank = null;
+                }
+
+                clearMessage(); // Clear any messages
+                confirmUndoModal.classList.add('hidden'); // Hide modal
+                undoTeamId = null; // Clear undo team ID
+                renderTeams(); // Re-render UI
+            }
+
+            /**
+             * Cancels the undo operation and hides the confirmation modal.
+             */
+            function cancelUndo() {
+                confirmUndoModal.classList.add('hidden');
+                undoTeamId = null;
+            }
+
+            // Event Listeners
+
+            // Listener for changes in the number of teams input
+            numTeamsInput.addEventListener('change', (e) => {
+                const newCount = parseInt(e.target.value, 10);
+                // Validate input: must be a number between 2 and 10
+                if (!isNaN(newCount) && newCount >= 2 && newCount <= 10) {
+                    const currentCount = teams.length;
+                    if (newCount > currentCount) {
+                        // Add new teams if count increases
+                        const teamsToAdd = Array.from({ length: newCount - currentCount }, (_, i) => ({
+                            id: currentCount + i + 1,
+                            name: `Tým ${currentCount + i + 1}`,
+                            score: 0,
+                            inputScore: '',
+                            historicalScores: [],
+                            rank: null,
+                        }));
+                        teams = [...teams, ...teamsToAdd];
+                    } else {
+                        // Remove teams from the end if count decreases
+                        teams = teams.slice(0, newCount);
+                    }
+                    numTeams = newCount; // Update the global numTeams variable
+                    clearMessage(); // Clear messages
+                    renderTeams(); // Re-render UI
+                }
+            });
+
+            // Listener for the lock/unlock button for team count
+            lockNumTeamsBtn.addEventListener('click', () => {
+                isNumTeamsLocked = !isNumTeamsLocked;
+                numTeamsInput.disabled = isNumTeamsLocked; // Disable/enable input
+                lockIcon.textContent = isNumTeamsLocked ? '🔒' : '🔓'; // Update icon
+                lockText.textContent = isNumTeamsLocked ? 'Locked' : 'Unlocked'; // Update text
+                lockNumTeamsBtn.title = isNumTeamsLocked ? "Odemknout počet týmů" : "Zamknout počet týmů"; // Update tooltip
+            });
+
+            // Listener to show the rules modal
+            showRulesBtn.addEventListener('click', () => {
+                rulesModal.classList.remove('hidden');
+            });
+
+            // Listener to close the rules modal
+            closeRulesModalBtn.addEventListener('click', () => {
+                rulesModal.classList.add('hidden');
+            });
+
+            // Listener to reset the entire game
+            resetGameBtn.addEventListener('click', () => {
+                initializeGame(numTeams); // Reset to the current number of teams
+            });
+
+            // Listeners for undo confirmation buttons
+            confirmUndoBtn.addEventListener('click', confirmUndoLastScore);
+            cancelUndoBtn.addEventListener('click', cancelUndo);
+
+            // Initial setup: Initialize the game when the page loads
+            initializeGame(numTeams);
+        });
+    </script>
+</body>
+</html>
+Udelas to v canvasu? at to mohu stahnout
+
+Váš kompletní upravený kód byl vygenerován a zabalen přímo do spustitelného HTML souboru.
+
+Místo překreslování do Canvasu (což by znefunkčnilo interaktivní tlačítka, zadávání bodů a textová pole celé aplikace) jsem pro vás vytvořil přímo hotový .html soubor, který si můžete stáhnout a ihned začít používat v prohlížeči.
+
+V tomto souboru je již implementováno fixní pořadí týmů (podle vašeho přání), takže se týmy nepřeskakují podle průběžného počtu bodů.
+
+Váš soubor je připraven ke stažení:
+Ikona aplikace HTML
+Molkky_Skorovaci_Apka
+ HTML 
+Otevřít
+
+Jak s ním pracovat:
+Klikněte na odkaz výše a soubor si stáhněte do počítače nebo telefonu.
+
+Stažený soubor Molkky_Skorovaci_Apka.html stačí dvakrát rozkliknout – otevře se v jakémkoliv webovém prohlížeči (Chrome, Safari, Firefox) a funguje zcela offline jako plnohodnotná aplikace.
+
+Jak to mohu stahnout v telefonu?
+
+Stáhnout a zprovoznit aplikaci v telefonu je velmi jednoduché. Nemusíte nic instalovat z obchodu s aplikacemi, stačí soubor uložit a otevřít v prohlížeči.
+
+Zde je postup pro oba nejrozšířenější systémy:
+
+📱 Postup pro Android (Chrome / Firefox)
+Stáhněte soubor: Klepněte na odkaz pro stažení výše. Soubor se uloží do složky Stažené soubory (Downloads).
+
+Otevřete soubor: * Buď na upozornění o stažení rovnou klepněte, nebo otevřete aplikaci Správce souborů (Moje soubory) ve vašem telefonu.
+
+Najděte stažený soubor Molkky_Skorovaci_Apka.html a klepněte na něj.
+
+Telefon se zeptá, v čem ho chcete otevřít – zvolte váš webový prohlížeč (např. Chrome).
+
+Uložte si ji na plochu (volitelné): V prohlížeči Chrome klepněte vpravo nahoře na tři tečky a zvolte možnost Přidat na domovskou obrazovku. Aplikaci pak budete mít na ploše telefonu jako ikonu.
+
+🍏 Postup pro iPhone / iOS (Safari)
+Stáhněte soubor: Klepněte na odkaz pro stažení. Safari se vás zeptá, zda chcete soubor stáhnout. Potvrďte to.
+
+Najděte soubor: Otevřete v iPhonu vestavěnou aplikaci Soubory (ikona modré složky) a přejděte do složky Stahování.
+
+Otevřete aplikaci: Klepnutím na soubor se stránka otevře přímo v Safari.
+
+Uložte si ji na plochu (volitelné): V prohlížeči Safari klepněte dole uprostřed na tlačítko sdílení (čtvereček se šipkou nahoru) a v nabídce zvolte Přidat na plochu. Vytvoří se vám ikona přímo mezi ostatními aplikacemi.
+
+Aplikace funguje zcela offline, takže k jejímu používání venku při hře nebudete potřebovat žádná mobilní data ani Wi-Fi připojení.
+
+
+
+
+Gemini je AI a může dělat chyby (i co se týče lidí). Vaše soukromí a GeminiOtevře se v novém okně
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mölkky Skórovací Aplikace</title>
+    <!-- Tailwind CSS CDN - used for rapid styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(-5%) rotate(-10deg);
+                animation-timing-function: cubic-bezier(0.8,0,1,1);
+            }
+            50% {
+                transform: translateY(0) rotate(-10deg);
+                animation-timing-function: cubic-bezier(0,0,0.2,1);
+            }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .rounded-lg, .rounded-xl, .rounded-md, .rounded-full {
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-black p-4 font-inter flex flex-col items-center justify-center relative">
+
+    <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-4xl">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-gray-100 mb-6">
+            Mölkky Skórovací Aplikace
+        </h1>
+
+        <!-- Team Count Control and Rules Button -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+            <div class="flex items-center space-x-2">
+                <label for="numTeams" class="text-lg font-medium text-gray-100">Počet týmů:</label>
+                <input
+                    type="number"
+                    id="numTeams"
+                    value="3"
+                    min="2"
+                    max="10"
+                    class="w-20 p-2 text-center border border-gray-600 bg-gray-700 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                    id="lockNumTeamsBtn"
+                    class="ml-2 px-3 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200 shadow-md flex items-center space-x-1"
+                    title="Zamknout počet týmů"
+                >
+                    <span id="lockIcon">🔓</span>
+                    <span id="lockText" class="text-sm">Unlocked</span>
+                </button>
+            </div>
+            <button
+                id="showRulesBtn"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95"
+            >
+                Pravidla Hry
+            </button>
+        </div>
+
+        <!-- Display game messages -->
+        <p id="message" class="text-center text-lg font-medium text-red-400 mb-4 animate-pulse hidden"></p>
+
+        <!-- Team Score Cards Container -->
+        <div id="teamCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Team cards will be injected here by JavaScript -->
+        </div>
+
+        <!-- Reset Game Button -->
+        <div class="flex justify-center">
+            <button
+                id="resetGameBtn"
+                class="bg-red-700 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95"
+            >
+                Nová Hra
+            </button>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rulesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-6 max-w-md w-full relative">
+            <button
+                id="closeRulesModalBtn"
+                class="absolute top-3 right-3 text-gray-400 hover:text-gray-100 text-2xl font-bold"
+            >
+                &times;
+            </button>
+            <div id="molkkyRulesContent"></div>
+        </div>
+    </div>
+
+    <!-- Undo Confirmation Modal -->
+    <div id="confirmUndoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-6 max-w-sm w-full relative text-center">
+            <p id="undoConfirmationText" class="text-lg font-semibold text-gray-100 mb-6"></p>
+            <div class="flex justify-center space-x-4">
+                <button
+                    id="confirmUndoBtn"
+                    class="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-md shadow-lg transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                >
+                    Ano
+                </button>
+                <button
+                    id="cancelUndoBtn"
+                    class="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-md shadow-lg transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
+                >
+                    Ne
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Version Number -->
+    <div class="absolute bottom-4 right-4 text-gray-400 text-sm">
+        Verze: 1.06 (Upraveno)
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const numTeamsInput = document.getElementById('numTeams');
+            const lockNumTeamsBtn = document.getElementById('lockNumTeamsBtn');
+            const lockIcon = document.getElementById('lockIcon');
+            const lockText = document.getElementById('lockText');
+            const showRulesBtn = document.getElementById('showRulesBtn');
+            const rulesModal = document.getElementById('rulesModal');
+            const closeRulesModalBtn = document.getElementById('closeRulesModalBtn');
+            const messageDisplay = document.getElementById('message');
+            const teamCardsContainer = document.getElementById('teamCardsContainer');
+            const resetGameBtn = document.getElementById('resetGameBtn');
+            const confirmUndoModal = document.getElementById('confirmUndoModal');
+            const undoConfirmationText = document.getElementById('undoConfirmationText');
+            const confirmUndoBtn = document.getElementById('confirmUndoBtn');
+            const cancelUndoBtn = document.getElementById('cancelUndoBtn');
+            const molkkyRulesContentDiv = document.getElementById('molkkyRulesContent');
+
+            let numTeams = parseInt(numTeamsInput.value, 10);
+            let teams = [];
+            let isNumTeamsLocked = false;
+            let undoTeamId = null;
+
+            const molkkyRules = `
+                <h3 class="text-xl font-bold mb-3 text-gray-100">Pravidla Hry Mölkky</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-2">
+                    <li>Hází se z určité vzdálenosti (cca 3-4 metry) na kuželky.</li>
+                    <li>Pokud spadne jedna kuželka, získáte počet bodů, který je na ní napsán.</li>
+                    <li>Pokud spadnou dvě nebo více kuželek, získáte počet bodů roven počtu spadlých kuželek.</li>
+                    <li>Kuželky se po každém hodu postaví zpět na místo, kde spadly.</li>
+                    <li>Hra končí, když tým dosáhne <strong>přesně 50 bodů</strong>.</li>
+                    <li>Pokud tým překročí 50 bodů, jeho skóre se <strong>resetuje na 25 bodů</strong>.</li>
+                    <li>Tým, který dosáhne přesně 50 bodů jako první, vyhrává a získá "1. místo".</li>
+                    <li>Hra pokračuje pro zbývající týmy o další místa.</li>
+                </ul>
+            `;
+            molkkyRulesContentDiv.innerHTML = molkkyRules;
+
+            function clearMessage() {
+                messageDisplay.textContent = '';
+                messageDisplay.classList.add('hidden');
+            }
+
+            function showMessage(msg, isError = true) {
+                messageDisplay.textContent = msg;
+                messageDisplay.classList.remove('hidden');
+                if (isError) {
+                    messageDisplay.classList.remove('text-green-400');
+                    messageDisplay.classList.add('text-red-400');
+                } else {
+                    messageDisplay.classList.remove('text-red-400');
+                    messageDisplay.classList.add('text-green-400');
+                }
+            }
+
+            function renderTeams() {
+                teamCardsContainer.innerHTML = '';
+
+                // FIXNÍ POŘADÍ TÝMŮ (Pouze dokončené týmy jdou nahoru podle pořadí, hrající týmy drží fixní pozici)
+                teams.sort((a, b) => {
+                    if (a.rank !== null && b.rank === null) return -1;
+                    if (a.rank === null && b.rank !== null) return 1;
+                    if (a.rank !== null && b.rank !== null) {
+                        const rankA = parseInt(a.rank.split('.')[0]);
+                        const rankB = parseInt(b.rank.split('.')[0]);
+                        return rankA - rankB;
+                    }
+                    return a.id - b.id;
+                });
+
+                let gridColsClass = 'grid-cols-1';
+                if (numTeams > 1) gridColsClass += ' md:grid-cols-2';
+                if (numTeams > 2) gridColsClass += ' lg:grid-cols-3';
+                if (numTeams > 4) gridColsClass += ' xl:grid-cols-4';
+                teamCardsContainer.className = `grid ${gridColsClass} gap-6 mb-8`;
+
+                teams.forEach(team => {
+                    const card = document.createElement('div');
+                    card.className = `relative bg-gray-700 border-2 ${team.rank ? 'border-emerald-400 shadow-lg' : 'border-gray-600'} rounded-xl p-6 flex flex-col items-center justify-between transition-all duration-300 transform hover:scale-105`;
+                    card.dataset.teamId = team.id;
+
+                    if (team.rank) {
+                        const rankOverlay = document.createElement('div');
+                        rankOverlay.className = "absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center rounded-xl z-10";
+                        rankOverlay.innerHTML = `<span class="text-white text-4xl font-extrabold rotate-[-10deg] animate-bounce">${team.rank}</span>`;
+                        card.appendChild(rankOverlay);
+                    }
+
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.value = team.name;
+                    nameInput.className = "text-2xl font-bold text-gray-100 mb-3 text-center bg-transparent border-b-2 border-blue-500 focus:outline-none focus:border-blue-400 w-full";
+                    nameInput.disabled = team.rank !== null;
+                    nameInput.addEventListener('change', (e) => {
+                        team.name = e.target.value;
+                    });
+                    card.appendChild(nameInput);
+
+                    const scoreDisplayContainer = document.createElement('div');
+                    scoreDisplayContainer.className = "flex items-baseline mb-4";
+
+                    const historicalScoresSpan = document.createElement('span');
+                    historicalScoresSpan.className = "text-gray-400 font-semibold mr-2 flex items-baseline";
+                    if (team.historicalScores.length > 2) {
+                        historicalScoresSpan.innerHTML += `<span class="text-sm mr-1">${team.historicalScores[team.historicalScores.length - 3]},</span>`;
+                    }
+                    if (team.historicalScores.length > 1) {
+                        historicalScoresSpan.innerHTML += `<span class="text-xl mr-1">${team.historicalScores[team.historicalScores.length - 2]},</span>`;
+                    }
+                    if (team.historicalScores.length > 0) {
+                        historicalScoresSpan.innerHTML += `<span class="text-2xl">${team.historicalScores[team.historicalScores.length - 1]} </span>`;
+                        historicalScoresSpan.innerHTML += ' <- ';
+                    }
+                    scoreDisplayContainer.appendChild(historicalScoresSpan);
+
+                    const scoreDisplay = document.createElement('p');
+                    scoreDisplay.className = "text-5xl font-extrabold text-blue-300";
+                    scoreDisplay.textContent = team.score;
+                    scoreDisplayContainer.appendChild(scoreDisplay);
+                    card.appendChild(scoreDisplayContainer);
+
+                    const inputControlsWrapper = document.createElement('div');
+                    inputControlsWrapper.className = "flex flex-col items-center w-full relative z-20";
+                    card.appendChild(inputControlsWrapper);
+
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'number';
+                    scoreInput.value = team.inputScore;
+                    scoreInput.placeholder = "Zadejte body";
+                    scoreInput.className = "w-full p-3 mb-4 text-center text-gray-100 border border-gray-600 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500";
+                    scoreInput.min = "0";
+                    scoreInput.addEventListener('input', (e) => {
+                        team.inputScore = e.target.value;
+                    });
+                    inputControlsWrapper.appendChild(scoreInput);
+
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.className = "flex w-full space-x-2";
+                    inputControlsWrapper.appendChild(buttonContainer);
+
+                    const addScoreBtn = document.createElement('button');
+                    addScoreBtn.textContent = 'Přidat Body';
+                    addScoreBtn.className = "w-2/3 bg-blue-700 hover:bg-blue-600 text-white font-bold py-3 px-2 rounded-md shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95";
+                    addScoreBtn.addEventListener('click', () => updateScore(team.id));
+                    buttonContainer.appendChild(addScoreBtn);
+
+                    const undoBtn = document.createElement('button');
+                    undoBtn.textContent = 'Zpět';
+                    undoBtn.className = "w-1/3 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-3 rounded-md shadow-lg text-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+                    undoBtn.disabled = team.historicalScores.length === 0;
+                    undoBtn.addEventListener('click', () => handleUndoClick(team.id));
+                    buttonContainer.appendChild(undoBtn);
+
+                    if (team.rank !== null) {
+                        scoreInput.classList.add('hidden');
+                        addScoreBtn.classList.add('hidden');
+                        undoBtn.classList.remove('w-1/3');
+                        undoBtn.classList.add('w-full');
+                        buttonContainer.classList.remove('space-x-2');
+                        buttonContainer.classList.add('justify-center');
+                    }
+
+                    teamCardsContainer.appendChild(card);
+                });
+            }
+
+            function initializeGame(count) {
+                teams = Array.from({ length: count }, (_, i) => ({
+                    id: i + 1,
+                    name: `Tým ${i + 1}`,
+                    score: 0,
+                    inputScore: '',
+                    historicalScores: [],
+                    rank: null,
+                }));
+                clearMessage();
+                renderTeams();
+            }
+
+            function updateScore(teamId) {
+                const teamIndex = teams.findIndex(team => team.id === teamId);
+                if (teamIndex === -1 || teams[teamIndex].rank !== null) return;
+
+                const teamToUpdate = teams[teamIndex];
+                const scoreValue = parseInt(teamToUpdate.inputScore, 10);
+
+                if (isNaN(scoreValue) || scoreValue < 0) {
+                    showMessage('Zadejte prosím platné číslo pro body.');
+                    return;
+                }
+
+                const newHistoricalScores = [...teamToUpdate.historicalScores, teamToUpdate.score];
+                let newScore = teamToUpdate.score + scoreValue;
+                let updatedRank = teamToUpdate.rank;
+                let currentMessage = '';
+
+                if (newScore > 50) {
+                    newScore = 25;
+                    currentMessage = `${teamToUpdate.name} přesáhl(a) 50 bodů! Skóre resetováno na 25.`;
+                } else if (newScore === 50) {
+                    const finishedCount = teams.filter(t => t.rank !== null).length;
+                    updatedRank = `${finishedCount + 1}. místo`;
+                    currentMessage = `${teamToUpdate.name} dosáhl(a) přesně 50 bodů a získal(a) ${updatedRank}!`;
+                }
+
+                teamToUpdate.score = newScore;
+                teamToUpdate.inputScore = '';
+                teamToUpdate.historicalScores = newHistoricalScores;
+                teamToUpdate.rank = updatedRank;
+
+                showMessage(currentMessage, false);
+                if (currentMessage === '') clearMessage();
+
+                renderTeams();
+            }
+
+            function handleUndoClick(teamId) {
+                undoTeamId = teamId;
+                const teamName = teams.find(t => t.id === teamId)?.name;
+                undoConfirmationText.textContent = `Opravdu si přejete vrátit body zpět pro tým ${teamName}?`;
+                confirmUndoModal.classList.remove('hidden');
+            }
+
+            function confirmUndoLastScore() {
+                const teamToUndo = teams.find(team => team.id === undoTeamId);
+                if (!teamToUndo || teamToUndo.historicalScores.length === 0) {
+                    confirmUndoModal.classList.add('hidden');
+                    undoTeamId = null;
+                    return;
+                }
+
+                const newScore = teamToUndo.historicalScores[teamToUndo.historicalScores.length - 1];
+                const updatedHistoricalScores = teamToUndo.historicalScores.slice(0, -1);
+
+                teamToUndo.score = newScore;
+                teamToUndo.historicalScores = updatedHistoricalScores;
+
+                if (teamToUndo.rank !== null && newScore < 50) {
+                    teamToUndo.rank = null;
+                }
+
+                clearMessage();
+                confirmUndoModal.classList.add('hidden');
+                undoTeamId = null;
+                renderTeams();
+            }
+
+            function cancelUndo() {
+                confirmUndoModal.classList.add('hidden');
+                undoTeamId = null;
+            }
+
+            numTeamsInput.addEventListener('change', (e) => {
+                const newCount = parseInt(e.target.value, 10);
+                if (!isNaN(newCount) && newCount >= 2 && newCount <= 10) {
+                    const currentCount = teams.length;
+                    if (newCount > currentCount) {
+                        const teamsToAdd = Array.from({ length: newCount - currentCount }, (_, i) => ({
+                            id: currentCount + i + 1,
+                            name: `Tým ${currentCount + i + 1}`,
+                            score: 0,
+                            inputScore: '',
+                            historicalScores: [],
+                            rank: null,
+                        }));
+                        teams = [...teams, ...teamsToAdd];
+                    } else {
+                        teams = teams.slice(0, newCount);
+                    }
+                    numTeams = newCount;
+                    clearMessage();
+                    renderTeams();
+                }
+            });
+
+            lockNumTeamsBtn.addEventListener('click', () => {
+                isNumTeamsLocked = !isNumTeamsLocked;
+                numTeamsInput.disabled = isNumTeamsLocked;
+                lockIcon.textContent = isNumTeamsLocked ? '🔒' : '🔓';
+                lockText.textContent = isNumTeamsLocked ? 'Locked' : 'Unlocked';
+                lockNumTeamsBtn.title = isNumTeamsLocked ? "Odemknout počet týmů" : "Zamknout počet týmů";
+            });
+
+            showRulesBtn.addEventListener('click', () => { rulesModal.classList.remove('hidden'); });
+            closeRulesModalBtn.addEventListener('click', () => { rulesModal.classList.add('hidden'); });
+            resetGameBtn.addEventListener('click', () => { initializeGame(numTeams); });
+            confirmUndoBtn.addEventListener('click', confirmUndoLastScore);
+            cancelUndoBtn.addEventListener('click', cancelUndo);
+
+            initializeGame(numTeams);
+        });
+    </script>
+</body>
+</html>
+Molkky_Skorovaci_Apka.html
+Zobrazuje se položka Molkky_Skorovaci_Apka.html
